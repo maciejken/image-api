@@ -1,0 +1,27 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug server",
+        "program": "${workspaceFolder}/index.js",
+        "protocol": "inspector",
+        "outputCapture": "std",
+        "env": {
+          "NODE_ENV": "development",
+          "CERT_DIR": "C:\\Users\\macie\\.ssl\\certs",
+          "PORT": "3210",
+          "SEQUELIZE_DIALECT": "sqlite",
+          "SEQUELIZE_STORAGE": "images.sqlite",
+          "SEQUELIZE_LOGGING": "",
+          "ID_TOKEN_EXPIRES_IN": "1h",
+          "ACCESS_CONTROL_ALLOW_ORIGIN": "http://localhost:8080",
+          "IMAGE_UPLOAD_FIELD_NAME": "imagesUploaded"
+        }
+      }
+    ]
+}
