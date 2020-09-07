@@ -15,6 +15,6 @@ function checkValidationResult(req, res, next) {
   }
 }
 
-module.exports = function validate(schema) {
-  return [ checkSchema(schema), checkValidationResult ];
+module.exports = function validate(...schemas) {
+  return [ ...schemas.map(checkSchema), checkValidationResult ];
 };

@@ -13,11 +13,6 @@ module.exports = function UserModel(db, Sequelize) {
       unique: true,
       allowNull: false
     },
-    role: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: 'customer'
-    },
     password: {
       type: Sequelize.STRING,
       get() {

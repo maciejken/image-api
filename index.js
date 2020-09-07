@@ -14,10 +14,18 @@ const upload = require('./controllers/upload.controller');
 const images = require('./controllers/images.controller');
 
 const {
-  BodyIsUser,
+  BasicAuthHeader,
+  NewUserData,
+  UserData,
   QueryCommon,
-  validate
-} = require('./middleware/validation');
+  UserIsAdmin,
+  UserCanViewProfile,
+  UserCanEditProfile,
+  UserCanAddImages,
+  UserCanViewImage,
+  UserCanEditImage,
+} = require('./middleware/validation/schemas');
+const validate = require('./middleware/validation/validate');
 
 const { Regex } = require('./enum');
 
@@ -42,18 +50,18 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.get(`/api/auth`, auth.getIdToken);
-app.get(`/api/images/:filename`, images.sendData);
-app.post('/api/upload', upload, (req, res, next) => {
+app.get(`/api/auth`, validate(BasicAuthHeader), auth.getIdToken);
+app.get(`/api/images/:filename`, validate(UserCanViewImage), images.sendImage);
+app.post('/api/upload', validate(UserCanAddImages, ImageData), upload, (req, res, next) => {
   res.status(201).json(req.files);
 });
 
-app.get(`/api/users`, validate(QueryCommon), auth.allowAdmin, users.getUsers);
-app.get(`/api/users/:id(${Regex.positiveInt})`, auth.allowUser, users.getUser);
-app.post(`/api/users`, validate(BodyIsUser), users.createUser);
-app.put(`/api/users/:id(${Regex.positiveInt})`, validate(BodyIsUser),
-  auth.allowUser, users.updateUser);
-app.delete(`/api/users/:id(${Regex.positiveInt})`, auth.allowUser, users.removeUser);
+app.get(`/api/users`, validate(UserIsAdmin, QueryCommon), users.getUsers);
+app.get(`/api/users/:userId(${Regex.positiveInt})`, validate(UserCanViewProfile), users.getUser);
+app.post(`/api/users`, validate(NewUserData), users.createUser);
+app.patch(`/api/users/:userId(${Regex.positiveInt})`,
+  validate(UserCanEditProfile, UserData), users.updateUser);
+app.delete(`/api/users/:userId(${Regex.positiveInt})`, validate(UserCanEditProfile), users.removeUser);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);

@@ -72,7 +72,7 @@ module.exports = {
     if (authType === 'Bearer') {
       try {
         const { admin, sub } = new AuthService().verifyIdToken(token);
-        if (admin || sub === req.params.id) {
+        if (admin || sub === req.params.userId) {
           next();          
         } else {
           throw new Error();
