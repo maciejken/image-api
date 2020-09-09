@@ -104,25 +104,45 @@ const QueryCommon = {
   }
 };
 
-const UserIsAdmin = {
+const getUserToken = async (auth) => {
+  const [authType, token] = auth.split(' ');
+  const verifiedToken = new AuthService().verifyIdToken(token);
+  const user = await new UserService().getUser(verifiedToken.sub);
+  if (!user) {
+    throw new StatusCodeError(`user ${verifiedToken.sub} not found`, 400);
+  }
+  return verifiedToken;
+}
+
+const UserCanDoEverything = {
   Authorization: {
     in: 'headers',
     custom: {
-      options: async value => {
-        if (value && value.split(' ').length === 2) {
-          const [authType, token] = value.split(' ');
-          const jwt = new AuthService().verifyIdToken(token);
-          const user = await new UserService().getUser(jwt.sub);
-          if (!user) {
-            throw new StatusCodeError(`user ${jwt.sub} not found`, 400);
-          }
-          if (user.id !== process.env.ADMIN_ID) {
-            throw new StatusCodeError(`user ${jwt.sub} is not an admin`, 400);
-          }
+      options: async (value, { req }) => {
+        const token = await getUserToken(value);
+        if (user.id !== process.env.ADMIN_ID) {
+          throw new StatusCodeError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
         }
         return true;
       }
     },
+  }
+};
+
+const UserCanViewProfile = {
+
+};
+
+const UserCanEditProfile = {
+
+};
+
+const UserExists = {
+  Authorization: {
+    in: 'headers',
+    custom: {
+      options: getUserToken
+    }
   }
 };
 
@@ -132,10 +152,10 @@ module.exports = {
   NewUserData,
   UserData,
   QueryCommon,
-  UserIsAdmin,
+  UserExists,
+  UserCanDoEverything,
   UserCanViewProfile,
   UserCanEditProfile,
-  UserCanAddImages,
   UserCanViewImage,
   UserCanEditImage,
 };

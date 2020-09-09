@@ -18,7 +18,8 @@ const {
   NewUserData,
   UserData,
   QueryCommon,
-  UserIsAdmin,
+  UserExists,
+  UserCanDoEverything,
   UserCanViewProfile,
   UserCanEditProfile,
   UserCanAddImages,
@@ -52,11 +53,11 @@ app.use(limiter);
 
 app.get(`/api/auth`, validate(BasicAuthHeader), auth.getIdToken);
 app.get(`/api/images/:filename`, validate(UserCanViewImage), images.sendImage);
-app.post('/api/upload', validate(UserCanAddImages, ImageData), upload, (req, res, next) => {
+app.post('/api/upload', validate(UserExists, ImageData), upload, (req, res, next) => {
   res.status(201).json(req.files);
 });
 
-app.get(`/api/users`, validate(UserIsAdmin, QueryCommon), users.getUsers);
+app.get(`/api/users`, validate(UserCanDoEverything, QueryCommon), users.getUsers);
 app.get(`/api/users/:userId(${Regex.positiveInt})`, validate(UserCanViewProfile), users.getUser);
 app.post(`/api/users`, validate(NewUserData), users.createUser);
 app.patch(`/api/users/:userId(${Regex.positiveInt})`,
