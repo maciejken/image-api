@@ -3,8 +3,7 @@ var jwt = require('jsonwebtoken');
 const privateKey = fs.readFileSync(`${process.env.CERT_DIR}/privkey.pem`);
 var { User } = require('../model');
 
-module.exports = class AuthService {
-
+module.exports = {
   getIdToken(email, password) {
     return User.findOne({ where: { email } })
     .then(user => { 
@@ -21,10 +20,8 @@ module.exports = class AuthService {
       }
       return token;
     });
-  }
-
+  },
   verifyIdToken(token) {
     return jwt.verify(token, privateKey);
-  }
-
+  },
 };

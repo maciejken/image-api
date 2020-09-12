@@ -1,38 +1,6 @@
 const { Regex } = require('../../enum');
 const CustomValidator = require('./utils/custom-validator');
-const AuthService = require('../../services/auth.service');
-const UserService = require('../../services/user.service');
 const StatusCodeError = require('../errors/status-code-error');
-
-const BasicAuthHeader = {
-  Authorization: {
-    in: 'headers',
-    custom: {
-      options: (value, { res }) => {
-        if (!/^Basic [A-Za-z0-9=/+]{10,100}$/.test(value)) {
-          res.set('WWW-Authenticate', 'Basic');
-          throw new StatusCodeError(`unauthorized`, 401);
-        }
-        return true;
-      }
-    }
-  }
-};
-
-const BearerAuthHeader = {
-  Authorization: {
-    in: 'headers',
-    custom: {
-      options: (value, { res }) => {
-        if (!/^Bearer \S{10,1000}$/.test(value)) {
-          res.set('WWW-Authenticate', 'Bearer');
-          throw new StatusCodeError(`unauthorized`, 401);
-        }
-        return true;
-      }
-    }
-  }
-};
 
 const ContentType = {
   "content-type": {
@@ -56,106 +24,90 @@ const password = {
   },
 };
 
-const NewUserData = {
-  ...ContentType,
-  email,
-  password,
-};
-
-const UserData = {
-  ...ContentType,
-  email: {
-    ...email,
-    optional: true,
-  },
-  password: {
-    ...password,
-    optional: true,
-  },
-};
-
-const QueryCommon = {
-  order: {
-    in: "query",
-    custom: {
-      options: CustomValidator.maybeOrder
-    },
-    customSanitizer: {
-      options: value => value || 'id asc'
+module.exports = {
+  BasicAuthHeader: {
+    Authorization: {
+      in: 'headers',
+      custom: {
+        options: CustomValidator.isBasicAuth
+      }
     }
   },
-  page: {
-    in: "query",
-    custom: {
-      options: CustomValidator.maybePositiveInt
-    },
-    customSanitizer: {
-      options: value => value || '1'
+  BearerAuthHeader: {
+    Authorization: {
+      in: 'headers',
+      custom: {
+        options: CustomValidator.isBearerAuth
+      }
     }
   },
-  size: {
-    in: "query",
-    custom: {
-      options: CustomValidator.maybePositiveInt
+  NewUserData: {
+    ...ContentType,
+    email,
+    password,
+  },
+  UserData: {
+    ...ContentType,
+    email: {
+      ...email,
+      optional: true,
     },
-    customSanitizer: {
-      options: value => value || '10'
-    }
-  }
-};
-
-const getUserToken = async (auth) => {
-  const [authType, token] = auth.split(' ');
-  const verifiedToken = new AuthService().verifyIdToken(token);
-  const user = await new UserService().getUser(verifiedToken.sub);
-  if (!user) {
-    throw new StatusCodeError(`user ${verifiedToken.sub} not found`, 400);
-  }
-  return verifiedToken;
-}
-
-const UserCanDoEverything = {
-  Authorization: {
-    in: 'headers',
-    custom: {
-      options: async (value, { req }) => {
-        const token = await getUserToken(value);
-        if (user.id !== process.env.ADMIN_ID) {
-          throw new StatusCodeError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
-        }
-        return true;
+    password: {
+      ...password,
+      optional: true,
+    },
+  },
+  QueryCommon: {
+    order: {
+      in: "query",
+      custom: {
+        options: CustomValidator.isOrder
+      },
+      customSanitizer: {
+        options: value => value || 'id asc'
       }
     },
-  }
-};
-
-const UserCanViewProfile = {
-
-};
-
-const UserCanEditProfile = {
-
-};
-
-const UserExists = {
-  Authorization: {
-    in: 'headers',
-    custom: {
-      options: getUserToken
+    page: {
+      in: "query",
+      custom: {
+        options: CustomValidator.isPositiveInt
+      },
+      customSanitizer: {
+        options: value => value || '1'
+      }
+    },
+    size: {
+      in: "query",
+      custom: {
+        options: CustomValidator.isPositiveInt
+      },
+      customSanitizer: {
+        options: value => value || '10'
+      }
     }
-  }
-};
-
-module.exports = {
-  BasicAuthHeader,
-  BearerAuthHeader,
-  NewUserData,
-  UserData,
-  QueryCommon,
-  UserExists,
-  UserCanDoEverything,
-  UserCanViewProfile,
-  UserCanEditProfile,
-  UserCanViewImage,
-  UserCanEditImage,
+  },
+  UserExists: {
+    Authorization: {
+      in: 'headers',
+      custom: {
+        options: CustomValidator.isValidToken
+      }
+    }
+  },
+  UserCanDoEverything: {
+    Authorization: {
+      in: 'headers',
+      custom: {
+        options: async (value, { req }) => {
+          const token = await getUserToken(value);
+          if (user.id !== process.env.ADMIN_ID) {
+            throw new StatusCodeError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
+          }
+          return true;
+        }
+      },
+    }
+  },
+  UserCanViewProfile: {},
+  UserCanEditProfile: {},
 };

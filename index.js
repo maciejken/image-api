@@ -2,19 +2,20 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const rateLimit = require("express-rate-limit");
-const responseTime = require("response-time");
-const helmet = require("helmet");
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const responseTime = require('response-time');
+const helmet = require('helmet');
 
-const auth = require('./controllers/auth.controller');
-const users = require('./controllers/users.controller');
-const upload = require('./controllers/upload.controller');
-const images = require('./controllers/images.controller');
+const authController = require('./controllers/auth.controller');
+const userController = require('./controllers/user.controller');
+const uploadController = require('./controllers/upload.controller');
+const imageController = require('./controllers/image.controller');
 
 const {
   BasicAuthHeader,
+  BearerAuthHeader,
   NewUserData,
   UserData,
   QueryCommon,
@@ -22,15 +23,14 @@ const {
   UserCanDoEverything,
   UserCanViewProfile,
   UserCanEditProfile,
-  UserCanAddImages,
   UserCanViewImage,
   UserCanEditImage,
 } = require('./middleware/validation/schemas');
-const validate = require('./middleware/validation/validate');
+const check = require('./middleware/validation/check');
 
 const { Regex } = require('./enum');
 
-const logger = require("./libs/logger")("server");
+const logger = require('./libs/logger')('server');
 const { errorHandler } = require('./middleware/errors');
 
 const app = express();
@@ -51,18 +51,20 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.get(`/api/auth`, validate(BasicAuthHeader), auth.getIdToken);
-app.get(`/api/images/:filename`, validate(UserCanViewImage), images.sendImage);
-app.post('/api/upload', validate(UserExists, ImageData), upload, (req, res, next) => {
+app.get(`/api/auth`, check(BasicAuthHeader), authController.getIdToken);
+app.get(`api/auth/verify-token`, check(BearerAuthHeader), authController.verifyIdToken);
+app.get(`/api/images/:filename`, check(UserCanViewImage), imageController.sendImage);
+app.post('/api/upload', check(UserExists, ImageData), uploadController, (req, res, next) => {
   res.status(201).json(req.files);
 });
+app.patch(`/api/images/:filename`, check(UserCanEditImage, ImageData), imageController.updateImage);
 
-app.get(`/api/users`, validate(UserCanDoEverything, QueryCommon), users.getUsers);
-app.get(`/api/users/:userId(${Regex.positiveInt})`, validate(UserCanViewProfile), users.getUser);
-app.post(`/api/users`, validate(NewUserData), users.createUser);
+app.get(`/api/users`, check(UserCanDoEverything, QueryCommon), userController.getUsers);
+app.get(`/api/users/:userId(${Regex.positiveInt})`, check(UserCanViewProfile), userController.getUser);
+app.post(`/api/users`, check(NewUserData), userController.createUser);
 app.patch(`/api/users/:userId(${Regex.positiveInt})`,
-  validate(UserCanEditProfile, UserData), users.updateUser);
-app.delete(`/api/users/:userId(${Regex.positiveInt})`, validate(UserCanEditProfile), users.removeUser);
+  check(UserCanEditProfile, UserData), userController.updateUser);
+app.delete(`/api/users/:userId(${Regex.positiveInt})`, check(UserCanEditProfile), userController.removeUser);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);
