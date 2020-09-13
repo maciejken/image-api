@@ -14,8 +14,6 @@ const uploadController = require('./controllers/upload.controller');
 const imageController = require('./controllers/image.controller');
 
 const {
-  BasicAuthHeader,
-  BearerAuthHeader,
   NewUserData,
   UserData,
   QueryCommon,
@@ -25,6 +23,8 @@ const {
   UserCanEditProfile,
   UserCanViewImage,
   UserCanEditImage,
+  NewImageData,
+  ImageData,
 } = require('./middleware/validation/schemas');
 const check = require('./middleware/validation/check');
 
@@ -51,10 +51,10 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.get(`/api/auth`, check(BasicAuthHeader), authController.getIdToken);
-app.get(`api/auth/verify-token`, check(BearerAuthHeader), authController.verifyIdToken);
+app.get(`/api/auth`, authController.getIdToken);
+app.get(`/api/auth/verify-token`, authController.verifyIdToken);
 app.get(`/api/images/:filename`, check(UserCanViewImage), imageController.sendImage);
-app.post('/api/upload', check(UserExists, ImageData), uploadController, (req, res, next) => {
+app.post('/api/upload', check(UserExists, NewImageData), uploadController, (req, res, next) => {
   res.status(201).json(req.files);
 });
 app.patch(`/api/images/:filename`, check(UserCanEditImage, ImageData), imageController.updateImage);

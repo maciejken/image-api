@@ -25,22 +25,6 @@ const password = {
 };
 
 module.exports = {
-  BasicAuthHeader: {
-    Authorization: {
-      in: 'headers',
-      custom: {
-        options: CustomValidator.isBasicAuth
-      }
-    }
-  },
-  BearerAuthHeader: {
-    Authorization: {
-      in: 'headers',
-      custom: {
-        options: CustomValidator.isBearerAuth
-      }
-    }
-  },
   NewUserData: {
     ...ContentType,
     email,
@@ -99,8 +83,9 @@ module.exports = {
       in: 'headers',
       custom: {
         options: async (value, { req }) => {
-          const token = await getUserToken(value);
-          if (user.id !== process.env.ADMIN_ID) {
+          const token = CustomValidator.isBearerAuth(value)
+            && CustomValidator.isValidToken(value.replace('Bearer ', ''));
+          if (token.sub !== +process.env.ADMIN_ID) {
             throw new StatusCodeError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
           }
           return true;
@@ -110,4 +95,8 @@ module.exports = {
   },
   UserCanViewProfile: {},
   UserCanEditProfile: {},
+  UserCanViewImage: {},
+  UserCanEditImage: {},
+  NewImageData: {},
+  ImageData: {},
 };

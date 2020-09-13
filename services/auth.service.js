@@ -10,7 +10,7 @@ module.exports = {
       let token = null;
       if (user && user.isCorrectPassword(password)) {
         var payload = {
-          admin: user.role === 'admin'
+          admin: user.id === +process.env.ADMIN_ID
         };
         var options = {
           expiresIn: process.env.ID_TOKEN_EXPIRES_IN,

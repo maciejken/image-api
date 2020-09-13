@@ -8,5 +8,8 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  }, 
+  updateImage(req, res, next) {
+    res.status(200).json({ image: req.params.filename });
   }
 };

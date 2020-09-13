@@ -23,27 +23,12 @@ module.exports = {
     }
     return true;
   },
-  isBasicAuth(value, { res }) {
-    if (!/^Basic [A-Za-z0-9=/+]{10,100}$/.test(value)) {
-      res.set('WWW-Authenticate', 'Basic');
-      throw new StatusCodeError(`unauthorized`, 401);
-    }
-    return true;
-  },  
-  isBearerAuth(value, { res }) {
-    if (!/^Bearer \S{10,1000}$/.test(value)) {
-      res.set('WWW-Authenticate', 'Bearer');
-      throw new StatusCodeError(`unauthorized`, 401);
-    }
-    return true;
-  },
-  async isValidToken(auth) {
-    const [authType, token] = auth.split(' ');
-    const verifiedToken = authService.verifyIdToken(token);
-    const user = await userService.getUser(verifiedToken.sub);
-    if (!user) {
-      throw new StatusCodeError(`user ${verifiedToken.sub} not found`, 400);
-    }
-    return verifiedToken;
+  isValidToken(value) {
+    return authService.verifyIdToken(value);
+    // const user = await userService.getUser(verifiedToken.sub);
+    // if (!user) {
+    //   throw new StatusCodeError(`user ${verifiedToken.sub} not found`, 400);
+    // }
+    // return verifiedToken;
   }
 };
