@@ -1,21 +1,27 @@
 const authService = require('../services/auth.service');
 const Regex = require('../enum/regex.enum');
-const { StatusCodeError } = require('../middleware/errors');
+const CustomError = require('../middleware/errors/custom-error');
+
+function verifyBearerToken(auth) {
+  if (new RegExp(Regex.BearerAuth).test(auth)) {
+    try {
+      const token = auth.replace('Bearer ', '');
+      return authService.verifyIdToken(token);      
+    } catch (err) {
+      throw new CustomError(err.message, 403);
+    }
+  } else {
+    throw new CustomError(`unauthorized`, 401, ['WWW-Authenticate', 'Bearer']);
+  }
+}
 
 module.exports = {
   verifyIdToken(req, res, next) {
-    const auth = req.headers.authorization;
-    if (new RegExp(Regex.BearerAuth).test(auth)) {
-      try {
-        const token = auth.replace('Bearer ', '');
-        const verifiedToken = authService.verifyIdToken(token);
-        res.status(200).json(verifiedToken);        
-      } catch (err) {
-        next(new StatusCodeError(err.message, 403));
-      }
-    } else {
-      res.set('WWW-Authenticate', 'Bearer')
-      next(new StatusCodeError(`unauthorized`, 401));
+    try {
+      const verifiedToken = verifyBearerToken(req.headers.authorization);
+      res.status(200).json(verifiedToken);        
+    } catch (err) {
+      next(err);
     }
   },
   getIdToken(req, res, next) {
@@ -29,13 +35,12 @@ module.exports = {
         if (token) {
           res.status(200).send(token);
         } else {
-          throw new StatusCodeError('incorrect username or password', 403);
+          throw new CustomError('incorrect username or password', 403);
         }
       })
       .catch(next);
     } else {
-      res.set('WWW-Authenticate', 'Basic');
-      next(new StatusCodeError(`unauthorized`, 401));
+      next(new CustomError(`unauthorized`, 401, ['WWW-Authenticate', 'Basic']));
     }
   },
 };

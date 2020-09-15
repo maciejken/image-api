@@ -1,7 +1,4 @@
 'use strict';
-
-const authService = require('../../../services/auth.service');
-const userService = require('../../../services/user.service');
 const { Regex } = require('../../../enum');
 
 module.exports = {
@@ -23,12 +20,4 @@ module.exports = {
     }
     return true;
   },
-  isValidToken(value) {
-    return authService.verifyIdToken(value);
-    // const user = await userService.getUser(verifiedToken.sub);
-    // if (!user) {
-    //   throw new StatusCodeError(`user ${verifiedToken.sub} not found`, 400);
-    // }
-    // return verifiedToken;
-  }
 };

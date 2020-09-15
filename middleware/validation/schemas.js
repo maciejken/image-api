@@ -1,6 +1,6 @@
 const { Regex } = require('../../enum');
 const CustomValidator = require('./utils/custom-validator');
-const StatusCodeError = require('../errors/status-code-error');
+const CustomError = require('../errors/custom-error');
 
 const ContentType = {
   "content-type": {
@@ -86,7 +86,7 @@ module.exports = {
           const token = CustomValidator.isBearerAuth(value)
             && CustomValidator.isValidToken(value.replace('Bearer ', ''));
           if (token.sub !== +process.env.ADMIN_ID) {
-            throw new StatusCodeError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
+            throw new CustomError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
           }
           return true;
         }

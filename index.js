@@ -31,7 +31,7 @@ const check = require('./middleware/validation/check');
 const { Regex } = require('./enum');
 
 const logger = require('./libs/logger')('server');
-const { errorHandler } = require('./middleware/errors');
+const errorHandler = require('./middleware/errors/error-handler');
 
 const app = express();
 app.use(cors({ origin: process.env.ACCESS_CONTROL_ALLOW_ORIGIN }));
