@@ -12,6 +12,10 @@ module.exports = function ImageModel(db, Sequelize) {
     caption: {
       type: Sequelize.STRING,
       allowNull: true,
+    },
+    capturedAt: {
+      type: Sequelize.DATE,
+      allowNull: true,
     }
   });
   return Image;

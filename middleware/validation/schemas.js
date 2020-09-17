@@ -70,33 +70,6 @@ module.exports = {
       }
     }
   },
-  UserExists: {
-    Authorization: {
-      in: 'headers',
-      custom: {
-        options: CustomValidator.isValidToken
-      }
-    }
-  },
-  UserCanDoEverything: {
-    Authorization: {
-      in: 'headers',
-      custom: {
-        options: async (value, { req }) => {
-          const token = CustomValidator.isBearerAuth(value)
-            && CustomValidator.isValidToken(value.replace('Bearer ', ''));
-          if (token.sub !== +process.env.ADMIN_ID) {
-            throw new CustomError(`user ${token.sub} not permitted to ${req.method} ${req.originalUrl}`, 403);
-          }
-          return true;
-        }
-      },
-    }
-  },
-  UserCanViewProfile: {},
-  UserCanEditProfile: {},
-  UserCanViewImage: {},
-  UserCanEditImage: {},
   NewImageData: {},
   ImageData: {},
 };

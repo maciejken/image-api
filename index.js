@@ -17,16 +17,12 @@ const {
   NewUserData,
   UserData,
   QueryCommon,
-  UserExists,
-  UserCanDoEverything,
-  UserCanViewProfile,
-  UserCanEditProfile,
-  UserCanViewImage,
-  UserCanEditImage,
   NewImageData,
   ImageData,
 } = require('./middleware/validation/schemas');
 const check = require('./middleware/validation/check');
+
+const { verifyUser, verifyAdmin } = require('./middleware/auth');
 
 const { Regex } = require('./enum');
 
@@ -53,18 +49,18 @@ app.use(limiter);
 
 app.get(`/api/auth`, authController.getIdToken);
 app.get(`/api/auth/verify-token`, authController.verifyIdToken);
-app.get(`/api/images/:filename`, check(UserCanViewImage), imageController.sendImage);
-app.post('/api/upload', check(UserExists, NewImageData), uploadController, (req, res, next) => {
+app.get(`/api/images/:filename`, verifyUser, imageController.sendImage);
+app.post('/api/upload', check(NewImageData), verifyUser, uploadController, (req, res, next) => {
   res.status(201).json(req.files);
 });
-app.patch(`/api/images/:filename`, check(UserCanEditImage, ImageData), imageController.updateImage);
+app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
 
-app.get(`/api/users`, check(UserCanDoEverything, QueryCommon), userController.getUsers);
-app.get(`/api/users/:userId(${Regex.positiveInt})`, check(UserCanViewProfile), userController.getUser);
+app.get(`/api/users`, check(QueryCommon), verifyAdmin, userController.getUsers);
+app.get(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.getUser);
 app.post(`/api/users`, check(NewUserData), userController.createUser);
 app.patch(`/api/users/:userId(${Regex.positiveInt})`,
-  check(UserCanEditProfile, UserData), userController.updateUser);
-app.delete(`/api/users/:userId(${Regex.positiveInt})`, check(UserCanEditProfile), userController.removeUser);
+  check(UserData), verifyAdmin, userController.updateUser);
+app.delete(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);
