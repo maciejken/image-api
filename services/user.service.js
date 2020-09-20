@@ -11,11 +11,14 @@ module.exports = {
   getUser(id) {
     return User.findByPk(id);
   },
+  createUser(value) {
+    return User.create(value);
+  },
   removeUser(id) {
     return User.destroy({ where: { id } });
   },
-  upsertUser(id, value) {
-    return User.findByPk(id)
-    .then(user => user && user.update(value) || User.create(value));
+  async updateUser(id, value) {
+    const user = await User.findByPk(id);
+    return user && user.update(value);
   },
 };

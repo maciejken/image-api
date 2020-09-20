@@ -1,46 +1,51 @@
 var userService = require("../services/user.service");
 
-var upsertUser = (id) => (req, res, next) => {
-  const { email, password } = req.body;
-  userService.upsertUser(id, { email, password })
-    .then(user => {
-      res.status(200).json(user);
-    })
-    .catch(next);
-}
-
 module.exports = {
-  getUsers: (req, res, next) => {
-    const { order, page, size } = req.query;
-    userService.getUsers({ order, page, size })
-    .then(users => {
-      res.status(200).json(users);
-    })
-    .catch(next);
+  async getUsers(req, res, next) {
+    try {
+      const { order, page, size } = req.query;
+      const users = await userService.getUsers({ order, page, size });
+      res.status(200).json(users);      
+    } catch (err) {
+      next(err);
+    }
   },
-
-  getUser: (req, res, next) => {
-    userService.getUser(req.params.id)
-      .then(user => {
+  async getUser(req, res, next) {
+    try {
+      const user = await userService.getUser(req.params.id);
+      res.status(200).json(user);      
+    } catch (err) {
+      next(err);
+    }
+  },
+  async createUser(req, res, next) {
+    try {
+      if (new RegExp(Regex.localAddress).test(req.connection.remoteAddress)) {
+        const { email, password } = req.body;
+        const user = await userService.createUser(id, { email, password });
         res.status(200).json(user);
-      })
-      .catch(next);
+      } else {
+        throw new CustomError(`creating users remotely is not supported`, 400);
+      }
+    } catch (err) {
+      next(err);
+    }
   },
-
-  createUser: (req, res, next) => {
-    upsertUser()(req, res, next);
+  async updateUser(req, res, next) {
+    try {
+      const { email, password } = req.body;
+      const user = await userService.updateUser(id, { email, password });
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
   },
-
-  updateUser: (req, res, next) => {
-    upsertUser(req.params.id)(req, res, next);
-  },
-
-  removeUser: (req, res, next) => {
-    userService.removeUser(req.params.id)
-      .then(result => {
-        res.status(200).json(result);
-      })
-      .catch(next);
+  async removeUser(req, res, next) {
+    try {
+      const result = await userService.removeUser(req.params.id);
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-
 };
