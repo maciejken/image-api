@@ -49,11 +49,6 @@ app.use(limiter);
 
 app.get(`/api/auth`, authController.getIdToken);
 app.get(`/api/auth/verify-token`, authController.verifyIdToken);
-app.get(`/api/images/:filename`, verifyUser, imageController.sendImage);
-app.post('/api/upload', check(NewImageData), verifyUser, uploadController, (req, res, next) => {
-  res.status(201).json(req.files);
-});
-app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
 
 app.get(`/api/users`, check(QueryCommon), verifyAdmin, userController.getUsers);
 app.get(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.getUser);
@@ -61,6 +56,14 @@ app.post(`/api/users`, check(NewUserData), userController.createUser);
 app.patch(`/api/users/:userId(${Regex.positiveInt})`,
   check(UserData), verifyAdmin, userController.updateUser);
 app.delete(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
+
+app.get(`/api/images`, verifyAdmin, imageController.getImages);
+app.get(`/api/images/:filename`, verifyAdmin, imageController.getImage);
+app.post('/api/images', check(NewImageData), verifyUser, uploadController, (req, res, next) => {
+  res.status(201).json(req.files);
+});
+app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
+app.delete(`/api/images/:filename`, verifyAdmin, imageController.removeImage);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);
