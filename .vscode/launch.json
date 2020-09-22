@@ -20,7 +20,7 @@
           "SEQUELIZE_LOGGING": "",
           "ID_TOKEN_EXPIRES_IN": "1h",
           "ACCESS_CONTROL_ALLOW_ORIGIN": "http://localhost:8080",
-          "IMAGE_UPLOAD_FIELD_NAME": "imagesUploaded",
+          "IMAGE_UPLOAD_FIELD_NAME": "imageUpload",
           "ADMIN_ID": "1"
         }
       }

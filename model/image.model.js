@@ -16,7 +16,11 @@ module.exports = function ImageModel(db, Sequelize) {
     capturedAt: {
       type: Sequelize.DATE,
       allowNull: true,
-    }
+    },
+    mimeType: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
   });
   return Image;
 };

@@ -8,9 +8,10 @@ const rateLimit = require('express-rate-limit');
 const responseTime = require('response-time');
 const helmet = require('helmet');
 
+const upload = require('./middleware/upload');
+
 const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
-const uploadController = require('./controllers/upload.controller');
 const imageController = require('./controllers/image.controller');
 
 const {
@@ -59,9 +60,7 @@ app.delete(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userControll
 
 app.get(`/api/images`, verifyAdmin, imageController.getImages);
 app.get(`/api/images/:filename`, verifyAdmin, imageController.getImage);
-app.post('/api/images', check(NewImageData), verifyUser, uploadController, (req, res, next) => {
-  res.status(201).json(req.files);
-});
+app.post('/api/images', check(NewImageData), verifyUser, upload.single, imageController.createImage);
 app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
 app.delete(`/api/images/:filename`, verifyAdmin, imageController.removeImage);
 

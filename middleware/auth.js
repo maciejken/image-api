@@ -1,10 +1,11 @@
-const authService = require('../../services/auth.service');
-const CustomError = require('../errors/custom-error');
+const authService = require('../services/auth.service');
+const CustomError = require('./errors/custom-error');
 
 module.exports = {
   verifyUser(req, res, next) {
     try {
-      authService.verifyBearerToken(req.headers.authorization);
+      const token = authService.verifyBearerToken(req.headers.authorization);
+      req.verifiedUser = { id: token.sub };
       next();
     } catch (err) {
       next(err);
