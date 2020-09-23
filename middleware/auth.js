@@ -5,7 +5,7 @@ module.exports = {
   verifyUser(req, res, next) {
     try {
       const token = authService.verifyBearerToken(req.headers.authorization);
-      req.verifiedUser = { id: token.sub };
+      req.verifiedUserId = token.sub;
       next();
     } catch (err) {
       next(err);
