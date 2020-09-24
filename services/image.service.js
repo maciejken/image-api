@@ -2,6 +2,9 @@ const sharp = require('sharp');
 const { Image } = require('../model');
 
 module.exports = {
+  getImages() {
+    return Image.findAll();
+  },
   getImage(filename) {
     return Image.findByPk(filename);
   },
