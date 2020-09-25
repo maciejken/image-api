@@ -1,15 +1,13 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const privateKey = fs.readFileSync(`${process.env.CERT_DIR}/privkey.pem`);
-const Regex = require('../enum/regex.enum');
 const { User } = require('../model');
 const CustomError = require('../middleware/errors/custom-error');
 
 module.exports = {
   async getIdToken(auth) {
-    if (new RegExp(Regex.BasicAuth).test(auth)) {
-      const authBase64 = auth.replace('Basic ', '');
-      const [email, password] = Buffer.from(authBase64, 'base64')
+    if (auth) {
+      const [email, password] = Buffer.from(auth, 'base64')
         .toString('ascii')
         .split(':');
       const user = await User.findOne({ where: { email } });
@@ -29,10 +27,9 @@ module.exports = {
       throw new CustomError(`unauthorized`, 401, ['WWW-Authenticate', 'Basic']);
     }
   },
-  verifyBearerToken(auth) {
-    if (new RegExp(Regex.BearerAuth).test(auth)) {
+  verifyToken(token) {
+    if (token) {
       try {
-        const token = auth.replace('Bearer ', '');
         return jwt.verify(token, privateKey);      
       } catch (err) {
         throw new CustomError(err.message, 403);

@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const responseTime = require('response-time');
@@ -33,6 +34,7 @@ const errorHandler = require('./middleware/errors/error-handler');
 const app = express();
 app.use(cors({ origin: process.env.ACCESS_CONTROL_ALLOW_ORIGIN }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(helmet());
 app.use(responseTime());
 

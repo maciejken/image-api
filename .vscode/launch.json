@@ -18,7 +18,7 @@
           "SEQUELIZE_DIALECT": "sqlite",
           "SEQUELIZE_STORAGE": "images.sqlite",
           "SEQUELIZE_LOGGING": "",
-          "ID_TOKEN_EXPIRES_IN": "1h",
+          "ID_TOKEN_EXPIRES_IN": "3600000",
           "ACCESS_CONTROL_ALLOW_ORIGIN": "http://localhost:8080",
           "IMAGE_UPLOAD_FIELD_NAME": "imageUpload",
           "ADMIN_ID": "1"

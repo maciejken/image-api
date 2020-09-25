@@ -27,9 +27,9 @@ module.exports = {
   },
   async createImage(req, res, next) {
     try {
-      if (req.file && req.verifiedUserId) {
+      const { userId } = res.locals;
+      if (req.file && userId) {
         const { filename, mimetype } = req.file;
-        const userId = req.verifiedUserId;
         const thumbBase64 = await imageService.createThumbnail(filename);
         await fsService.saveThumbnail(filename, thumbBase64);
         const image = await imageService.createImage({
