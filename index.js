@@ -69,6 +69,7 @@ app.delete(`/api/images/:filename`, verifyAdmin, imageController.removeImage);
 app.get(`/api/uploads/:filename`, verifyUser, uploadController.getFile);
 app.get(`/api/uploads/thumbnails/:filename`, verifyUser, uploadController.getThumbnail);
 app.post(`/api/uploads`, verifyUser, upload.single, uploadController.createImage);
+app.delete(`/api/uploads/:filename`, verifyAdmin, uploadController.removeImage);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);

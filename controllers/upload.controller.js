@@ -33,4 +33,11 @@ module.exports = {
       next(err);
     }
   },
+  removeImage(req, res, next) {
+    try {
+      res.status(200).json({ message: req.ip });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
