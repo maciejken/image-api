@@ -6,5 +6,5 @@ module.exports = {
     password: `^[A-Za-z0-9.,;:!?@#$%^&*]{6,24}$`,
     BasicAuth: `^Basic [A-Za-z0-9=/+]{10,100}$`,
     BearerAuth: `^Bearer \\S{150,160}$`,
-    localAddress: `^(::1|${process.env.LAN_ADDRESS}\\d{2})$`,
+    localAddress: `^(::1|::ffff:${process.env.LAN_ADDRESS}\\d{2})$`,
   };
