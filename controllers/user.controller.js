@@ -14,7 +14,7 @@ module.exports = {
   },
   async getUser(req, res, next) {
     try {
-      const user = await userService.getUser(req.params.id);
+      const user = await userService.getUser(req.params.userId);
       res.status(200).json(user);      
     } catch (err) {
       next(err);
@@ -35,8 +35,9 @@ module.exports = {
   },
   async updateUser(req, res, next) {
     try {
+      const { userId } = req.params;
       const { email, password } = req.body;
-      const user = await userService.updateUser(id, { email, password });
+      const user = await userService.updateUser(userId, { email, password });
       res.status(200).json(user);
     } catch (err) {
       next(err);
@@ -44,7 +45,7 @@ module.exports = {
   },
   async removeUser(req, res, next) {
     try {
-      const result = await userService.removeUser(req.params.id);
+      const result = await userService.removeUser(req.params.userId);
       res.status(200).json(result);
     } catch (err) {
       next(err);
