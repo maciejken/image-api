@@ -1,5 +1,5 @@
-var Regex = require("./regex.enum");
+const Regex = require("./regex.enum");
 
 module.exports = {
-  Regex
+  Regex,
 };

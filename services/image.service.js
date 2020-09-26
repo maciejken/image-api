@@ -1,8 +1,10 @@
 const { Image } = require('../model');
+const buildQuery = require('../utils/build-query');
 
 module.exports = {
-  getImages() {
-    return Image.findAll();
+  getImages({ order, page, size }) {
+    const query = buildQuery({ order, page, size });
+    return Image.findAll(query);
   },
   getImage(filename) {
     return Image.findByPk(filename);
@@ -12,5 +14,9 @@ module.exports = {
   },
   removeImage(filename) {
     return Image.destroy({ where: { filename }});
-  }
+  },
+  async updateImage(filename, value) {
+    const image = await Image.findByPk(filename);
+    return image && image.update(value);
+  },
 };

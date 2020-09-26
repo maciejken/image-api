@@ -1,4 +1,4 @@
-var logger = require('../../libs/logger')('server');
+const logger = require('../../libs/logger')('server');
 
 module.exports = function errorHandler (err, req, res, next) {
   if (res.headersSent) {

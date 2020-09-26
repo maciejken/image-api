@@ -22,17 +22,13 @@ module.exports = {
   async createImage(req, res, next) {
     try {
       const { userId } = res.locals;
-      if (req.file && userId) {
-        const { filename } = req.file;
-        await thumbnailService.createThumbnail(filename);
-        const image = await imageService.createImage({
-          filename,
-          userId,
-        });
-        res.status(201).json(image);
-      } else {
-        throw new CustomError(`failed to create image`, 409);
-      }
+      const { filename } = req.file;
+      await thumbnailService.createThumbnail(filename);
+      const image = await imageService.createImage({
+        filename,
+        userId,
+      });
+      res.status(201).json(image);
     } catch (err) {
       next(err);
     }

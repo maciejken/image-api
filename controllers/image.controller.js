@@ -1,6 +1,5 @@
 const imageService = require('../services/image.service');
 const CustomError = require('../middleware/errors/custom-error');
-const thumbnailService = require('../services/thumbnail.service');
 
 module.exports = {
   async getImages(req, res, next) {
@@ -26,20 +25,32 @@ module.exports = {
   async createImage(req, res, next) {
     try {
       const { userId } = res.locals;
-      const { filename, capturedAt, caption } = req.body;
+      const { filename, capturedAt, caption, description } = req.body;
       const image = await imageService.createImage({
         filename,
         userId,
         capturedAt,
         caption,
+        description,
       });
       res.status(201).json(image);
     } catch (err) {
       next(err);
     }
   },
-  updateImage(req, res, next) {
-    res.status(200).json({ image: req.params.filename });
+  async updateImage(req, res, next) {
+    try {
+      const { filename } = req.params;
+      const { caption, capturedAt, description } = req.body;
+      const result = await imageService.updateImage(filename, {
+        caption,
+        capturedAt,
+        description,
+      });
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
   },
   async removeImage(req, res, next) {
     try {

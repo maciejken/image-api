@@ -1,8 +1,8 @@
-var winston = require('winston');
+const winston = require('winston');
 
 class Logger {
   constructor(service) {
-    var logger = winston.createLogger({
+    const logger = winston.createLogger({
       level: process.env[`NODE_ENV`] !== "development" ? "info" : "debug",
       format: winston.format.combine(
         winston.format.timestamp(),

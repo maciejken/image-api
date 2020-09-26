@@ -1,10 +1,10 @@
 'use strict';
 
-var { checkSchema, validationResult } = require('express-validator');
-var CustomError = require('../errors/custom-error');
+const { checkSchema, validationResult } = require('express-validator');
+const CustomError = require('../errors/custom-error');
 
 function checkValidationResult(req, res, next) {
-  var result = validationResult(req);
+  const result = validationResult(req);
   if (!result.isEmpty()) {
     const message = result.errors
       .map(e => `Error: ${e.param} = '${e.value}' in ${e.location}, message: ${e.msg}`)

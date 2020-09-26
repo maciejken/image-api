@@ -1,7 +1,7 @@
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 module.exports = function UserModel(db, Sequelize) {
-  var User = db.define('user', {
+  const User = db.define('user', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -39,7 +39,7 @@ module.exports = function UserModel(db, Sequelize) {
       .digest('hex');
   };
 
-  var setSaltAndPassword = user => {
+  const setSaltAndPassword = user => {
     if (user.changed('password')) {
       user.salt = User.generateSalt();
       user.password = User.encryptPassword(user.password(), user.salt());

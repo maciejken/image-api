@@ -1,13 +1,13 @@
 module.exports = function ImageModel(db, Sequelize) {
-  var Image = db.define('image', {
+  const Image = db.define('image', {
     filename: {
       type: Sequelize.STRING,
       primaryKey: true,
       allowNull: false,
     },
-    userId: { // authorId?
+    userId: {
       type: Sequelize.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
     caption: {
       type: Sequelize.STRING,
@@ -15,6 +15,10 @@ module.exports = function ImageModel(db, Sequelize) {
     },
     capturedAt: {
       type: Sequelize.DATE,
+      allowNull: true,
+    },
+    description: {
+      type: Sequelize.STRING,
       allowNull: true,
     },
   });
