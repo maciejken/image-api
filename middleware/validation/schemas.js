@@ -48,7 +48,7 @@ module.exports = {
         options: CustomValidator.isOrder
       },
       customSanitizer: {
-        options: value => value || 'id asc'
+        options: value => value || 'createdAt asc'
       }
     },
     page: {
