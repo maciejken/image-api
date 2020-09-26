@@ -4,7 +4,7 @@ const CustomError = require('../middleware/errors/custom-error');
 module.exports = {
   async getImages(req, res, next) {
     try {
-      const images = await imageService.getImages();
+      const images = await imageService.getImages(req.query);
       res.status(200).json(images);      
     } catch (err) {
       next(err);

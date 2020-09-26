@@ -60,7 +60,7 @@ app.patch(`/api/users/:userId(${Regex.positiveInt})`,
   check(UserData), verifyAdmin, userController.updateUser);
 app.delete(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
 
-app.get(`/api/images`, verifyAdmin, imageController.getImages);
+app.get(`/api/images`, check(QueryCommon), verifyAdmin, imageController.getImages);
 app.get(`/api/images/:filename`, verifyAdmin, imageController.getImage);
 app.post('/api/images', check(NewImageData), verifyUser, imageController.createImage);
 app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
