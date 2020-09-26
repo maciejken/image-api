@@ -1,6 +1,7 @@
 const userService = require('../services/user.service');
 const Regex = require('../enum/regex.enum');
 const CustomError = require('../middleware/errors/custom-error');
+const logger = require('../libs/logger');
 
 module.exports = {
   async getUsers(req, res, next) {
@@ -22,6 +23,7 @@ module.exports = {
   },
   async createUser(req, res, next) {
     try {
+      logger.info(`req.ip: '${req.ip}'`);
       if (new RegExp(Regex.localAddress).test(req.ip)) {
         const { email, password } = req.body;
         const user = await userService.createUser({ email, password });
