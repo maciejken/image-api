@@ -1,4 +1,6 @@
-var userService = require("../services/user.service");
+const userService = require('../services/user.service');
+const Regex = require('../enum/regex.enum');
+const CustomError = require('../middleware/errors/custom-error');
 
 module.exports = {
   async getUsers(req, res, next) {
@@ -20,9 +22,9 @@ module.exports = {
   },
   async createUser(req, res, next) {
     try {
-      if (new RegExp(Regex.localAddress).test(req.connection.remoteAddress)) {
+      if (new RegExp(Regex.localAddress).test(req.ip)) {
         const { email, password } = req.body;
-        const user = await userService.createUser(id, { email, password });
+        const user = await userService.createUser({ email, password });
         res.status(200).json(user);
       } else {
         throw new CustomError(`creating users remotely is not supported`, 400);

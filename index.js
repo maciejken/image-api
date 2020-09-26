@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const bodyParser = require('body-parser');
@@ -14,6 +13,7 @@ const upload = require('./middleware/upload');
 const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
 const imageController = require('./controllers/image.controller');
+const uploadController = require('./controllers/upload.controller');
 
 const {
   NewUserData,
@@ -62,9 +62,13 @@ app.delete(`/api/users/:userId(${Regex.positiveInt})`, verifyAdmin, userControll
 
 app.get(`/api/images`, verifyAdmin, imageController.getImages);
 app.get(`/api/images/:filename`, verifyAdmin, imageController.getImage);
-app.post('/api/images', check(NewImageData), verifyUser, upload.single, imageController.createImage);
+app.post('/api/images', check(NewImageData), verifyUser, imageController.createImage);
 app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
 app.delete(`/api/images/:filename`, verifyAdmin, imageController.removeImage);
+
+app.get(`/api/uploads/:filename`, verifyUser, uploadController.getFile);
+app.get(`/api/uploads/thumbnails/:filename`, verifyUser, uploadController.getThumbnail);
+app.post(`/api/uploads`, verifyUser, upload.single, uploadController.createImage);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);
