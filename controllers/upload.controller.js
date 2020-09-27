@@ -1,4 +1,5 @@
 const path = require('path');
+const fsService = require('../services/fs.service');
 const imageService = require('../services/image.service');
 const thumbnailService = require('../services/thumbnail.service');
 
@@ -33,9 +34,14 @@ module.exports = {
       next(err);
     }
   },
-  removeImage(req, res, next) {
+  async removeImage(req, res, next) {
     try {
-      res.status(200).json({ message: req.ip });
+      const { filename } = req.params;
+      const removeMainFile = fsService.removeFile(path.join(__dirname, `../uploads/${filename}`));
+      const removeThumbnail = fsService.removeFile(path.join(__dirname, `../uploads/thumbnails/${filename}`));
+      const removeFromDb = imageService.removeImage(filename);
+      await Promise.all([removeMainFile, removeThumbnail, removeFromDb]);
+      res.status(200).json({ message: `${filename} upload removed` });
     } catch (err) {
       next(err);
     }
