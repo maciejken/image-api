@@ -32,7 +32,10 @@ const logger = require('./libs/logger')('server');
 const errorHandler = require('./middleware/errors/error-handler');
 
 const app = express();
-app.use(cors({ origin: process.env.ACCESS_CONTROL_ALLOW_ORIGIN }));
+app.use(cors({
+  origin: process.env.ACCESS_CONTROL_ALLOW_ORIGIN,
+  credentials: true,
+}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(helmet());
