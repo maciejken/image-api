@@ -1,13 +1,12 @@
 {
-  "name": "image-upload-api",
+  "name": "image-api",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:maciejken/image-upload-api.git",
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -26,6 +25,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.2",
     "jest": "^26.4.2",
     "supertest": "^5.0.0"
   }
