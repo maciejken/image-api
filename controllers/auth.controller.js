@@ -1,11 +1,10 @@
 const authService = require('../services/auth.service');
+const requestUtil = require('../utils/request.util');
 
 module.exports = {
   verifyIdToken(req, res, next) {
     try {
-      const { access_token } = req.cookies;
-      const { authorization } = req.headers;
-      const token = access_token || authorization && authorization.replace('Bearer ', '');
+      const token = requestUtil.getAccessToken(req);
       const verifiedToken = authService.verifyToken(token);
       res.status(200).json(verifiedToken);        
     } catch (err) {
@@ -17,7 +16,8 @@ module.exports = {
       const { authorization } = req.headers;
       const token = await authService.getIdToken(authorization && authorization.replace('Basic ',''));
       const expires = new Date(Date.now() + parseInt(process.env.ID_TOKEN_EXPIRES_IN));
-      res.cookie('access_token', token, { expires, sameSite: true, secure: true });
+      res.cookie('authorization', `Bearer ${token}`, { expires, sameSite: true, secure: true });
+      res.cookie('authorized', true, { expires, sameSite: true });
       res.status(200).send(token);
     } catch (err) {
       next(err);

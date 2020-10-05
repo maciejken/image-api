@@ -1,16 +1,11 @@
 const authService = require('../services/auth.service');
 const CustomError = require('./errors/custom-error');
-
-function getAccessToken(req) {
-  const { access_token } = req.cookies;
-  const { authorization } = req.headers
-  return access_token || authorization && authorization.replace('Bearer ', '');
-}
+const requestUtil = require('../utils/request.util');
 
 module.exports = {
   verifyUser(req, res, next) {
     try {
-      const token = getAccessToken(req);
+      const token = requestUtil.getAccessToken(req);
       const verifiedToken = authService.verifyToken(token);
       res.locals.userId = verifiedToken.sub;
       next();
@@ -20,7 +15,7 @@ module.exports = {
   },
   verifyAdmin(req, res, next) {
     try {
-      const token = getAccessToken(req);
+      const token = requestUtil.getAccessToken(req);
       const verifiedToken = authService.verifyToken(token);
       res.locals.userId = verifiedToken.sub;
       if (verifiedToken.admin) {
