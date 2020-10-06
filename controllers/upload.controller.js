@@ -1,7 +1,6 @@
 const path = require('path');
 const fsService = require('../services/fs.service');
 const imageService = require('../services/image.service');
-const thumbnailService = require('../services/thumbnail.service');
 
 module.exports = {
   getFile(req, res, next) {
@@ -20,16 +19,14 @@ module.exports = {
       next(err);
     }
   },
-  async createImage(req, res, next) {
+  async createImages(req, res, next) {
     try {
       const { userId } = res.locals;
-      const { filename } = req.file;
-      await thumbnailService.createThumbnail(filename);
-      const image = await imageService.createImage({
-        filename,
-        userId,
-      });
-      res.status(201).json(image);
+      const images = await Promise.all(req.files.map(f => {
+        const { filename } = f;
+        return imageService.createImage({ filename, userId });
+      }));
+      res.status(201).json(images);
     } catch (err) {
       next(err);
     }

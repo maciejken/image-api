@@ -17,11 +17,6 @@ const fileFilter = (req, file, cb) => {
   }
 }
 
-const uploadField = process.env.IMAGE_UPLOAD_FIELD_NAME;
-
 const upload = multer({ storage, limits, fileFilter });
 
-module.exports = {
-  array: upload.array(uploadField),
-  single: upload.single(uploadField),
-};
+module.exports = upload;

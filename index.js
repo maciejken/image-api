@@ -9,6 +9,8 @@ const responseTime = require('response-time');
 const helmet = require('helmet');
 
 const upload = require('./middleware/upload');
+const uploadField = process.env.IMAGE_UPLOAD_FIELD_NAME;
+const thumbnail = require('./middleware/thumbnail');
 
 const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
@@ -71,7 +73,7 @@ app.delete(`/api/images/:filename`, verifyAdmin, imageController.removeImage);
 
 app.get(`/api/uploads/:filename`, verifyUser, uploadController.getFile);
 app.get(`/api/uploads/thumbnails/:filename`, verifyUser, uploadController.getThumbnail);
-app.post(`/api/uploads`, verifyUser, upload.single, uploadController.createImage);
+app.post(`/api/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
 app.delete(`/api/uploads/:filename`, verifyAdmin, uploadController.removeImage);
 
 const logRequestError = (req, res, next) => {
