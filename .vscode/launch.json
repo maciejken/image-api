@@ -21,7 +21,9 @@
           "ID_TOKEN_EXPIRES_IN": "900000",
           "ACCESS_CONTROL_ALLOW_ORIGIN": "http://localhost:8080",
           "IMAGE_UPLOAD_FIELD_NAME": "imageUpload",
-          "ADMIN_ID": "1"
+          "ADMIN_ID": "1",
+          "PATH_TO_UPLOADS": "C:\\Users\\macie\\pictures\\uploads",
+          "PATH_TO_THUMBNAILS": "C:\\Users\\macie\\pictures\\uploads\\thumbnails"
         }
       }
     ]

@@ -1,7 +1,8 @@
 const multer = require('multer');
+const { pathToUploads } = require('../config');
 
 const storage = multer.diskStorage({
-  destination: 'uploads',
+  destination: pathToUploads,
   filename: (req, file, cb) => {
     cb(null, file.originalname);
   }

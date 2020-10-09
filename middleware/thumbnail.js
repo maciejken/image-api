@@ -1,8 +1,7 @@
 const sharp = require('sharp');
 const path = require('path');
 
-const pathToUploads = path.join(__dirname, '../uploads');
-const pathToThumbnails = path.join(pathToUploads, 'thumbnails');
+const { pathToUploads, pathToThumbnails } = require('../config');
 
 module.exports = async function createThumbnail(req, res, next) {
   try {
@@ -15,4 +14,4 @@ module.exports = async function createThumbnail(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};

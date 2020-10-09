@@ -55,11 +55,11 @@ module.exports = {
   async removeImage(req, res, next) {
     try {
       const { filename } = req.params;
-      const result = await imageService.removeImage(filename);
-      if (result) {
-        res.status(200).json({ message: `${result} file${result > 1 ? 's' : ''} removed`});
+      const resultDb = await imageService.removeImage(filename);
+      if (resultDb) {
+        res.status(200).json({ message: `${resultDb} record${resultDb > 1 ? 's' : ''} removed`});
       } else {
-        throw new CustomError(`/uploads/${filename} file not found`, 404);
+        throw new CustomError(`${filename} record not found`, 404);
       }
     } catch (err) {
       next(err);
