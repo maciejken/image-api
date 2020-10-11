@@ -55,6 +55,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+app.use(express.static('public'));
 app.get(`/api/auth`, authController.getIdToken);
 app.get(`/api/auth/verify-token`, authController.verifyIdToken);
 
