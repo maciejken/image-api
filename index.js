@@ -72,7 +72,7 @@ app.patch(`/api/images/:filename`, check(ImageData), verifyAdmin, imageControlle
 app.delete(`/api/images/:filename`, verifyAdmin, imageController.removeImage);
 
 app.get(`/api/uploads/:filename`, verifyUser, uploadController.getFile);
-app.get(`/api/uploads/thumbnails/:filename`, verifyUser, uploadController.getThumbnail);
+app.get(`/api/uploads/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
 app.post(`/api/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
 app.delete(`/api/uploads/:filename`, verifyAdmin, uploadController.removeImage);
 

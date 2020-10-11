@@ -48,7 +48,7 @@ module.exports = {
         options: CustomValidator.isOrder
       },
       customSanitizer: {
-        options: value => value || 'createdAt asc'
+        options: value => value || 'createdAt desc'
       }
     },
     page: {
@@ -66,7 +66,7 @@ module.exports = {
         options: CustomValidator.isPositiveInt
       },
       customSanitizer: {
-        options: value => value || '10'
+        options: value => value || '100'
       }
     }
   },

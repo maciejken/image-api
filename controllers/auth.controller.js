@@ -17,7 +17,7 @@ module.exports = {
       const token = await authService.getIdToken(authorization && authorization.replace('Basic ',''));
       const expires = new Date(Date.now() + parseInt(process.env.ID_TOKEN_EXPIRES_IN));
       res.cookie('authorization', `Bearer ${token}`, { expires, sameSite: true, secure: true });
-      res.cookie('authorized', true, { expires, sameSite: true });
+      res.cookie('authExpiration', expires.getTime(), { expires, sameSite: true });
       res.status(200).send(token);
     } catch (err) {
       next(err);

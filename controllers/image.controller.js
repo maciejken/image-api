@@ -25,12 +25,19 @@ module.exports = {
   async createImage(req, res, next) {
     try {
       const { userId } = res.locals;
-      const { filename, capturedAt, caption, description } = req.body;
+      const {
+        filename,
+        caption,
+        location,
+        locationDateTime,
+        description
+      } = req.body;
       const image = await imageService.createImage({
         filename,
         userId,
-        capturedAt,
         caption,
+        location,
+        locationDateTime,
         description,
       });
       res.status(201).json(image);
@@ -41,10 +48,11 @@ module.exports = {
   async updateImage(req, res, next) {
     try {
       const { filename } = req.params;
-      const { caption, capturedAt, description } = req.body;
+      const { caption, location, locationDateTime, description } = req.body;
       const result = await imageService.updateImage(filename, {
         caption,
-        capturedAt,
+        location,
+        locationDateTime,
         description,
       });
       res.status(200).json(result);

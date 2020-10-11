@@ -13,8 +13,12 @@ module.exports = function ImageModel(db, Sequelize) {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    capturedAt: {
-      type: Sequelize.DATE,
+    locationDateTime: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    location: {
+      type: Sequelize.STRING,
       allowNull: true,
     },
     description: {
