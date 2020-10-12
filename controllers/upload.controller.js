@@ -20,6 +20,15 @@ module.exports = {
       next(err);
     }
   },
+  // TODO getMediumSizeFile(req, res, next) {
+  //   try {
+  //     const { filename } = req.params;
+
+  //     res.sendFile(path.join(pathToThumbnails, filename));
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // },
   async createImages(req, res, next) {
     try {
       const { userId } = res.locals;

@@ -7,6 +7,7 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const responseTime = require('response-time');
 const helmet = require('helmet');
+const path = require('path');
 
 const upload = require('./middleware/upload');
 const uploadField = process.env.IMAGE_UPLOAD_FIELD_NAME;
@@ -55,27 +56,32 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+const apiPrefix = process.env.API_PREFIX;
 app.use(express.static('public'));
-app.get(`/auth`, authController.getIdToken);
+app.get(`${apiPrefix}/auth`, authController.getIdToken);
 app.get(`/auth/verify-token`, authController.verifyIdToken);
 
-app.get(`/users`, check(QueryCommon), verifyAdmin, userController.getUsers);
-app.get(`/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.getUser);
-app.post(`/users`, check(NewUserData), userController.createUser);
-app.patch(`/users/:userId(${Regex.positiveInt})`,
+app.get(`${apiPrefix}/users`, check(QueryCommon), verifyAdmin, userController.getUsers);
+app.get(`${apiPrefix}/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.getUser);
+app.post(`${apiPrefix}/users`, check(NewUserData), userController.createUser);
+app.patch(`${apiPrefix}/users/:userId(${Regex.positiveInt})`,
   check(UserData), verifyAdmin, userController.updateUser);
-app.delete(`/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
+app.delete(`${apiPrefix}/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
 
-app.get(`/images`, check(QueryCommon), verifyAdmin, imageController.getImages);
-app.get(`/images/:filename`, verifyAdmin, imageController.getImage);
-app.post('/images', check(NewImageData), verifyUser, imageController.createImage);
-app.patch(`/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
-app.delete(`/images/:filename`, verifyAdmin, imageController.removeImage);
+app.get(`${apiPrefix}/images`, check(QueryCommon), verifyAdmin, imageController.getImages);
+app.get(`${apiPrefix}/images/:filename`, verifyAdmin, imageController.getImage);
+app.post(`${apiPrefix}/images`, check(NewImageData), verifyUser, imageController.createImage);
+app.patch(`${apiPrefix}/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
+app.delete(`${apiPrefix}/images/:filename`, verifyAdmin, imageController.removeImage);
 
-app.get(`/uploads/:filename`, verifyUser, uploadController.getFile);
-app.get(`/uploads/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
-app.post(`/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
-app.delete(`/uploads/:filename`, verifyAdmin, uploadController.removeImage);
+app.get(`${apiPrefix}/uploads/:filename`, verifyUser, uploadController.getFile);
+app.get(`${apiPrefix}/uploads/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
+// TODO app.get(`/uploads/:filename/medium-size`, verifyUser, uploadController.getMediumSizeFile);
+app.post(`${apiPrefix}/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
+app.delete(`${apiPrefix}/uploads/:filename`, verifyAdmin, uploadController.removeImage);
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);
