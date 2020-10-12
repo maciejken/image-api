@@ -50,16 +50,14 @@ const logRequestStart = (req, res, next) => {
 };
 app.use(logRequestStart);
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+const authLimiter = rateLimit({
+  windowMs: process.env.RATE_LIMIT_WINDOW_MS * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX)
 });
-app.use(limiter);
 
 const apiPrefix = process.env.API_PREFIX;
-app.use(express.static('public'));
-app.get(`${apiPrefix}/auth`, authController.getIdToken);
-app.get(`/auth/verify-token`, authController.verifyIdToken);
+app.get(`${apiPrefix}/auth`, authLimiter, authController.getIdToken);
+app.get(`${apiPrefix}/auth/verify-token`, authController.verifyIdToken);
 
 app.get(`${apiPrefix}/users`, check(QueryCommon), verifyAdmin, userController.getUsers);
 app.get(`${apiPrefix}/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.getUser);
@@ -79,6 +77,8 @@ app.get(`${apiPrefix}/uploads/:filename/thumbnail`, verifyUser, uploadController
 // TODO app.get(`/uploads/:filename/medium-size`, verifyUser, uploadController.getMediumSizeFile);
 app.post(`${apiPrefix}/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
 app.delete(`${apiPrefix}/uploads/:filename`, verifyAdmin, uploadController.removeImage);
+
+// app.use(express.static('public'));
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });

@@ -18,13 +18,15 @@
           "SEQUELIZE_DIALECT": "sqlite",
           "SEQUELIZE_STORAGE": "images.sqlite",
           "SEQUELIZE_LOGGING": "",
-          "ID_TOKEN_EXPIRES_IN": "900000",
+          "ID_TOKEN_VALIDITY_SECONDS": "900",
           "ACCESS_CONTROL_ALLOW_ORIGIN": "http://localhost:8080",
           "IMAGE_UPLOAD_FIELD_NAME": "imageUpload",
           "ADMIN_ID": "1",
           "PATH_TO_UPLOADS": "C:\\Users\\macie\\pictures\\uploads",
           "PATH_TO_THUMBNAILS": "C:\\Users\\macie\\pictures\\uploads\\thumbnails",
-          "API_PREFIX": "/api"
+          "API_PREFIX": "/api",
+          "RATE_LIMIT_WINDOW_MS": "900",
+          "RATE_LIMIT_MAX": "3"
         }
       }
     ]

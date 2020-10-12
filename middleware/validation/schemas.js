@@ -66,7 +66,7 @@ module.exports = {
         options: CustomValidator.isPositiveInt
       },
       customSanitizer: {
-        options: value => value || '100'
+        options: value => value || '10'
       }
     }
   },
