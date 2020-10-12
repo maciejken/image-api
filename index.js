@@ -78,7 +78,7 @@ app.get(`${apiPrefix}/uploads/:filename/thumbnail`, verifyUser, uploadController
 app.post(`${apiPrefix}/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
 app.delete(`${apiPrefix}/uploads/:filename`, verifyAdmin, uploadController.removeImage);
 
-// app.use(express.static('public'));
+app.use(express.static('public'));
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
