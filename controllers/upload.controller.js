@@ -1,10 +1,10 @@
 const path = require('path');
-const fsService = require('../services/fs.service');
+const fileService = require('../services/file.service');
 const imageService = require('../services/image.service');
 const { pathToUploads, pathToThumbnails } = require('../config');
 
 module.exports = {
-  getFile(req, res, next) {
+  getFullSizeImage(req, res, next) {
     try {
       const { filename } = req.params;
       res.sendFile(path.join(pathToUploads, filename));
@@ -20,15 +20,15 @@ module.exports = {
       next(err);
     }
   },
-  // TODO getMediumSizeFile(req, res, next) {
-  //   try {
-  //     const { filename } = req.params;
-
-  //     res.sendFile(path.join(pathToThumbnails, filename));
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
+  async getMediumSizeImage(req, res, next) {
+    try {
+      const { filename } = req.params;
+      const file = await fileService.getImage(filename, { width: 800 });
+      res.status(200).send(file);
+    } catch (err) {
+      next(err);
+    }
+  },
   async createImages(req, res, next) {
     try {
       const { userId } = res.locals;

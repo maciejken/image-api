@@ -72,9 +72,9 @@ app.post(`${apiPrefix}/images`, check(NewImageData), verifyUser, imageController
 app.patch(`${apiPrefix}/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
 app.delete(`${apiPrefix}/images/:filename`, verifyAdmin, imageController.removeImage);
 
-app.get(`${apiPrefix}/uploads/:filename`, verifyUser, uploadController.getFile);
+app.get(`${apiPrefix}/uploads/:filename`, verifyUser, uploadController.getMediumSizeImage);
 app.get(`${apiPrefix}/uploads/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
-// TODO app.get(`/uploads/:filename/medium-size`, verifyUser, uploadController.getMediumSizeFile);
+app.get(`${apiPrefix}/uploads/:filename/full-size`, verifyUser, uploadController.getFullSizeImage);
 app.post(`${apiPrefix}/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
 app.delete(`${apiPrefix}/uploads/:filename`, verifyAdmin, uploadController.removeImage);
 
