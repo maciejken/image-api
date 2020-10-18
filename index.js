@@ -12,6 +12,7 @@ const path = require('path');
 const upload = require('./middleware/upload');
 const uploadField = process.env.IMAGE_UPLOAD_FIELD_NAME;
 const thumbnail = require('./middleware/thumbnail');
+const readExif = require('./middleware/read-exif');
 
 const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
@@ -75,7 +76,8 @@ app.delete(`${apiPrefix}/images/:filename`, verifyAdmin, imageController.removeI
 app.get(`${apiPrefix}/uploads/:filename`, verifyUser, uploadController.getMediumSizeImage);
 app.get(`${apiPrefix}/uploads/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
 app.get(`${apiPrefix}/uploads/:filename/full-size`, verifyUser, uploadController.getFullSizeImage);
-app.post(`${apiPrefix}/uploads`, verifyUser, upload.array(uploadField), thumbnail, uploadController.createImages);
+app.post(`${apiPrefix}/uploads`,
+  verifyUser, upload.array(uploadField), thumbnail, readExif, uploadController.createImages);
 app.delete(`${apiPrefix}/uploads/:filename`, verifyAdmin, uploadController.removeImage);
 
 app.use(express.static('public'));

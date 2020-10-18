@@ -12,6 +12,8 @@ const db = new Sequelize({
 const User = UserModel(db, Sequelize);
 const Image = ImageModel(db, Sequelize);
 
+User.hasMany(Image);
+
 db.sync().then(() => {
   logger.info(`database synced`);
 });

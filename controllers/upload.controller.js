@@ -33,8 +33,18 @@ module.exports = {
     try {
       const { userId } = res.locals;
       const images = await Promise.all(req.files.map(f => {
-        const { filename } = f;
-        return imageService.createImage({ filename, userId });
+        const { filename, size } = f;
+        const { location, datetime, camera, width, height } = f.exif;
+        return imageService.createImage({
+          filename,
+          userId,
+          location,
+          datetime,
+          camera,
+          width,
+          height,
+          size,
+        });
       }));
       res.status(201).json(images);
     } catch (err) {
