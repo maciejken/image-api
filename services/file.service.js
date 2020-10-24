@@ -10,11 +10,11 @@ function parseExif(data) {
   let exif;
   if (data) {
     const { gps, image } = data;
-    const lonRef = gps && gps.GPSLatitudeRef;
-    const [lonD, lonM, lonS] = (gps && gps.GPSLatitude) || [];
-    const latRef = gps && gps.GPSLongitudeRef;
-    const [latD, latM, latS] = (gps && gps.GPSLongitude) || [];
-    const location = `${lonD}°${lonM}'${lonS}''${lonRef} ${latD}°${latM}'${latS}''${latRef}`;
+    const latRef = gps && gps.GPSLatitudeRef;
+    const [latD, latM, latS] = (gps && gps.GPSLatitude) || [];
+    const lonRef = gps && gps.GPSLongitudeRef;
+    const [lonD, lonM, lonS] = (gps && gps.GPSLongitude) || [];
+    const location = `${latD}°${latM}'${latS}''${latRef} ${lonD}°${lonM}'${lonS}''${lonRef}`;
     const [hh, mm, ss] = (gps && gps.GPSTimeStamp) || [];
     const [year, month, day] = (gps && gps.GPSDateStamp.split(':')) || [];
     const datetime = year && month && day && `${year}-${month}-${day}T${hh}:${mm}:${ss}.000Z`;

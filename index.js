@@ -67,8 +67,8 @@ app.patch(`${apiPrefix}/users/:userId(${Regex.positiveInt})`,
   check(UserData), verifyAdmin, userController.updateUser);
 app.delete(`${apiPrefix}/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
 
-app.get(`${apiPrefix}/images`, check(QueryCommon), verifyAdmin, imageController.getImages);
-app.get(`${apiPrefix}/images/:filename`, verifyAdmin, imageController.getImage);
+app.get(`${apiPrefix}/images`, check(QueryCommon), verifyUser, imageController.getImages);
+app.get(`${apiPrefix}/images/:filename`, verifyUser, imageController.getImage);
 app.post(`${apiPrefix}/images`, check(NewImageData), verifyUser, imageController.createImage);
 app.patch(`${apiPrefix}/images/:filename`, check(ImageData), verifyAdmin, imageController.updateImage);
 app.delete(`${apiPrefix}/images/:filename`, verifyAdmin, imageController.removeImage);
