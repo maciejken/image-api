@@ -18,10 +18,13 @@ const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
 const imageController = require('./controllers/image.controller');
 const uploadController = require('./controllers/upload.controller');
+const groupController = require('./controllers/group.controller');
 
 const {
   NewUserData,
   UserData,
+  NewGroupData,
+  GroupData,
   QueryCommon,
   NewImageData,
   ImageData,
@@ -66,6 +69,15 @@ app.post(`${apiPrefix}/users`, check(NewUserData), userController.createUser);
 app.patch(`${apiPrefix}/users/:userId(${Regex.positiveInt})`,
   check(UserData), verifyAdmin, userController.updateUser);
 app.delete(`${apiPrefix}/users/:userId(${Regex.positiveInt})`, verifyAdmin, userController.removeUser);
+app.post(`${apiPrefix}/users/:userId(${Regex.positiveInt})/group/:groupId(${Regex.positiveInt})`,
+  verifyAdmin, userController.addUserToGroup);
+
+app.get(`${apiPrefix}/groups`, check(QueryCommon), verifyAdmin, groupController.getGroups);
+app.get(`${apiPrefix}/groups/:groupId(${Regex.positiveInt})`, verifyAdmin, groupController.getGroup);
+app.post(`${apiPrefix}/groups`, check(NewGroupData), verifyAdmin, groupController.createGroup);
+app.patch(`${apiPrefix}/groups/:groupId(${Regex.positiveInt})`,
+  check(GroupData), verifyAdmin, groupController.updateGroup);
+app.delete(`${apiPrefix}/groups/:groupId(${Regex.positiveInt})`, verifyAdmin, groupController.removeGroup);
 
 app.get(`${apiPrefix}/images`, check(QueryCommon), verifyUser, imageController.getImages);
 app.get(`${apiPrefix}/images/:filename`, verifyUser, imageController.getImage);

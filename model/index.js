@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const UserModel = require('./user.model');
+const GroupModel = require('./group.model');
 const ImageModel = require('./image.model');
 const logger = require('../libs/logger')('model');
 
@@ -10,9 +11,12 @@ const db = new Sequelize({
 });
 
 const User = UserModel(db, Sequelize);
+const Group = GroupModel(db, Sequelize);
 const Image = ImageModel(db, Sequelize);
 
 User.hasMany(Image);
+Group.hasMany(Image);
+User.belongsToMany(Group, { through: 'user_groups' });
 
 db.sync().then(() => {
   logger.info(`database synced`);
@@ -21,4 +25,5 @@ db.sync().then(() => {
 module.exports = {
   Image,
   User,
+  Group,
 };

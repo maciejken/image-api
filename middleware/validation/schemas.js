@@ -1,28 +1,35 @@
 const { Regex } = require('../../enum');
 const CustomValidator = require('./utils/custom-validator');
-const CustomError = require('../errors/custom-error');
 
 const ContentType = {
-  "content-type": {
-    in: "headers",
+  'content-type': {
+    in: 'headers',
     matches: {
-      options: ["^application/json$", "i"]
+      options: ['^application/json$', 'i']
     }
   },
 };
 
 const email = {
-  in: "body",
+  in: 'body',
   isEmail: true  
 };
 
 const password = {
-  in: "body",
+  in: 'body',
   errorMessage: 'password must be 6-24 characters long (upper/lowercase letters, digits or special characters like `!`, `@`, `#`, etc.)',
   matches: {
     options: Regex.password
   },
 };
+
+const name = {
+  in: 'body',
+  errorMessage: 'name must be 4-10 characters long',
+  matches: {
+    options: Regex.groupName
+  },
+}
 
 module.exports = {
   NewUserData: {
@@ -41,9 +48,20 @@ module.exports = {
       optional: true,
     },
   },
+  NewGroupData: {
+    ...ContentType,
+    name,
+  },
+  GroupData: {
+    ...ContentType,
+    name: {
+      ...name,
+      optional: true,
+    },
+  },
   QueryCommon: {
     order: {
-      in: "query",
+      in: 'query',
       custom: {
         options: CustomValidator.isOrder
       },
@@ -52,7 +70,7 @@ module.exports = {
       }
     },
     page: {
-      in: "query",
+      in: 'query',
       custom: {
         options: CustomValidator.isPositiveInt
       },
@@ -61,7 +79,7 @@ module.exports = {
       }
     },
     size: {
-      in: "query",
+      in: 'query',
       custom: {
         options: CustomValidator.isPositiveInt
       },

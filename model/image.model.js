@@ -5,10 +5,6 @@ module.exports = function ImageModel(db, Sequelize) {
       primaryKey: true,
       allowNull: false,
     },
-    userId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
     caption: {
       type: Sequelize.STRING,
       allowNull: true,

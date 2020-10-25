@@ -13,6 +13,14 @@ module.exports = function UserModel(db, Sequelize) {
       unique: true,
       allowNull: false
     },
+    name: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    avatar: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     password: {
       type: Sequelize.STRING,
       get() {

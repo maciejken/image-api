@@ -1,6 +1,7 @@
 const userService = require('../services/user.service');
 const Regex = require('../enum/regex.enum');
 const CustomError = require('../middleware/errors/custom-error');
+const groupService = require('../services/group.service');
 
 module.exports = {
   async getUsers(req, res, next) {
@@ -47,6 +48,16 @@ module.exports = {
     try {
       const result = await userService.removeUser(req.params.userId);
       res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  },
+  async addUserToGroup(req, res, next) {
+    try {
+      const user = await userService.getUser(req.params.userId);
+      const group = await groupService.getGroup(req.params.groupId);
+      const result = await user.addGroup(group);
+      res.status(201).json(result);
     } catch (err) {
       next(err);
     }

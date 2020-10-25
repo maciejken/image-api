@@ -10,15 +10,17 @@ async function getTokenFromBasic(auth) {
     .split(':');
   const user = await User.findOne({ where: { email } });
   if (user && user.isCorrectPassword(password)) {
-    return getSignedToken(user.id);        
+    const groups = await user.getGroups();
+    const gids = groups.map(g => g.id);
+    return getSignedToken(user.id, gids);        
   } else {
     throw new CustomError('incorrect username or password', 403);
   }
 }
 
-function getSignedToken(userId) {
+function getSignedToken(userId, groups) {
   const payload = {
-    admin: userId === parseInt(process.env.ADMIN_ID)
+    groups,
   };
   const options = {
     expiresIn: process.env.ID_TOKEN_VALIDITY_SECONDS * 1000,
@@ -39,7 +41,8 @@ function refreshToken(oldToken) {
   try {
     const verifiedToken = verifyToken(oldToken);
     const userId = parseInt(verifiedToken.sub);
-    return getSignedToken(userId);
+    const groups = verifiedToken.groups;
+    return getSignedToken(userId, groups);
   } catch (err) {
     throw new CustomError(err.message, 403);
   }

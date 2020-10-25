@@ -17,12 +17,16 @@ module.exports = {
     try {
       const token = requestUtil.getAccessToken(req);
       const verifiedToken = authService.verifyToken(token);
-      res.locals.userId = verifiedToken.sub;
-      if (verifiedToken.admin) {
+      const { groups, sub } = verifiedToken;
+      res.locals.userId = sub;
+      res.locals.userGroups = groups;
+      const adminGroupId = parseInt(process.env.ADMIN_GROUP_ID);
+      const isAdmin = Array.isArray(groups) && groups.includes(adminGroupId);
+      if (isAdmin) {
         next();
       } else {
         next(new CustomError(
-          `user ${verifiedToken.sub} not permitted to ${req.method} ${req.originalUrl}`,
+          `user ${sub} not permitted to ${req.method} ${req.originalUrl}`,
           403
         ));
       }
