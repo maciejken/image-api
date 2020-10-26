@@ -1,4 +1,5 @@
 const groupService = require('../services/group.service');
+const userService = require('../services/user.service');
 const Regex = require('../enum/regex.enum');
 const CustomError = require('../middleware/errors/custom-error');
 
@@ -51,4 +52,14 @@ module.exports = {
       next(err);
     }
   },
+  async addUserToGroup(req, res, next) {
+    try {
+      const user = await userService.getUser(req.query.userId);
+      const group = await groupService.getGroup(req.params.groupId);
+      const result = await user.addGroup(group);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 };

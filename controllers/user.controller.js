@@ -55,7 +55,7 @@ module.exports = {
   async addUserToGroup(req, res, next) {
     try {
       const user = await userService.getUser(req.params.userId);
-      const group = await groupService.getGroup(req.params.groupId);
+      const group = await groupService.getGroup(req.query.groupId);
       const result = await user.addGroup(group);
       res.status(201).json(result);
     } catch (err) {
