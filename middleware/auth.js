@@ -13,6 +13,23 @@ module.exports = {
       next(err);
     }
   },
+  verifyGroup(req, res, next) {
+    try {
+      const { groupId } = req.query;
+      const token = requestUtil.getAccessToken(req);
+      const verifiedToken = authService.verifyToken(token);
+      const { groups, sub } = verifiedToken;
+      if (groups.includes(parseInt(groupId))) {
+        res.locals.userId = sub;
+        res.locals.userGroups = groups;        
+        next();
+      } else {
+        throw new CustomError(`user ${sub} is not member of group ${groupId}`, 403);
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
   verifyAdmin(req, res, next) {
     try {
       const token = requestUtil.getAccessToken(req);
@@ -25,10 +42,10 @@ module.exports = {
       if (isAdmin) {
         next();
       } else {
-        next(new CustomError(
+        throw new CustomError(
           `user ${sub} not permitted to ${req.method} ${req.originalUrl}`,
           403
-        ));
+        );
       }
     } catch (err) {
       next(err);

@@ -90,4 +90,12 @@ module.exports = {
   },
   NewImageData: {},
   ImageData: {},
+  UploadQuery: {
+    groupId: {
+      in: 'query',
+      isInt: {
+        options: { min: 1 }
+      }
+    }
+  }
 };

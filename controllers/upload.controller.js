@@ -31,6 +31,7 @@ module.exports = {
   },
   async createImages(req, res, next) {
     try {
+      const { groupId } = req.query;
       const { userId } = res.locals;
       const images = await Promise.all(req.files.map(f => {
         const { filename, size } = f;
@@ -38,6 +39,7 @@ module.exports = {
         return imageService.createImage({
           filename,
           userId,
+          groupId,
           location,
           datetime,
           camera,
