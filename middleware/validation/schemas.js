@@ -94,7 +94,7 @@ module.exports = {
     groupId: {
       in: 'query',
       isInt: {
-        options: { min: 1 }
+        options: { min: 1, max: 100 }
       }
     }
   }
