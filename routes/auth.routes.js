@@ -10,6 +10,5 @@ const authLimiter = rateLimit({
 });
 
 router.get(`/`, authLimiter, authController.getIdToken);
-router.get(`/verify-token`, authController.verifyIdToken);
 
 module.exports = router;

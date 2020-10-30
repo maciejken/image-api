@@ -1,6 +1,9 @@
 const authService = require('../services/auth.service');
+const imageService = require('../services/image.service');
 const CustomError = require('./errors/custom-error');
 const requestUtil = require('../utils/request.util');
+
+const notPermittedError = new CustomError(`unable to perform requested operation`, 403);
 
 function processToken(req, res) {
   const token = requestUtil.getAccessToken(req);
@@ -10,24 +13,60 @@ function processToken(req, res) {
   res.locals.groups = groups;
 }
 
+function canAuthorize(groups, groupId) {
+  const adminGroupId = parseInt(process.env.ADMIN_GROUP_ID);
+  return Array.isArray(groups)
+    && (groups.includes(groupId) || groups.includes(adminGroupId));
+}
+
 module.exports = {
   verifyUser(req, res, next) {
     try {
       processToken(req, res);
       next();
     } catch (err) {
+      next(notPermittedError);
+    }
+  },
+  verifyQueryGroup(req, res, next) {
+    try {
+      processToken(req, res);
+      const { groups } = res.locals;
+      const groupId = parseInt(req.query.groupId);
+      if (canAuthorize(groups, groupId)) {
+        next();
+      } else {
+        throw notPermittedError;
+      }
+    } catch (err) {
       next(err);
     }
   },
-  verifyUserGroup(req, res, next) {
+  async verifyImageUser(req, res, next) {
     try {
-      const groupId = parseInt(req.query.groupId);
       processToken(req, res);
-      const { groups, userId } = res.locals;
-      if (groups.includes(groupId)) {
+      const { userId } = res.locals;
+      const image = await imageService.getImage(req.params.filename);
+      if (image.userId === userId) {
+        res.locals.image = image;
         next();
       } else {
-        throw new CustomError(`user ${userId} is not member of group ${groupId}`, 403);
+        throw notPermittedError;
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+  async verifyImageGroup(req, res, next) {
+    try {
+      processToken(req, res);
+      const { groups } = res.locals;
+      const image = await imageService.getImage(req.params.filename);
+      if (canAuthorize(groups, image.groupId)) {
+        res.locals.image = image;
+        next();
+      } else {
+        throw notPermittedError;
       }
     } catch (err) {
       next(err);
@@ -37,15 +76,10 @@ module.exports = {
     try {
       processToken(req, res);
       const { groups } = res.locals;
-      const adminGroupId = parseInt(process.env.ADMIN_GROUP_ID);
-      const isAdmin = Array.isArray(groups) && groups.includes(adminGroupId);
-      if (isAdmin) {
+      if (canAuthorize(groups)) {
         next();
       } else {
-        throw new CustomError(
-          `user ${sub} not permitted to ${req.method} ${req.originalUrl}`,
-          403
-        );
+        throw notPermittedError;
       }
     } catch (err) {
       next(err);

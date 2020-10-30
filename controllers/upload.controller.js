@@ -8,13 +8,7 @@ module.exports = {
     // may contain sensitive data (gps/exif)
     try {
       const { filename } = req.params;
-      const { groups, userId } = res.locals;
-      const image = await imageService.getImage(filename);
-      if (groups.includes(image.groupId)) {
-        res.sendFile(path.join(pathToUploads, filename));
-      } else {
-        throw new CustomError(`User ${userId} is not permitted to download file ${filename}`, 403);
-      } 
+      res.sendFile(path.join(pathToUploads, filename));
     } catch (err) {
       next(err);
     }

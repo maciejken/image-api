@@ -15,8 +15,4 @@ module.exports = {
   removeImage(filename) {
     return Image.destroy({ where: { filename }});
   },
-  async updateImage(filename, value) {
-    const image = await Image.findByPk(filename);
-    return image && image.update(value);
-  },
 };
