@@ -6,6 +6,10 @@ const { ExifImage } = require('exif');
 const CustomError = require('../middleware/errors/custom-error');
 const { pathToUploads, pathToThumbnails } = require('../config');
 
+function zeroPad(n) {
+  return String(n).padStart(2, '0');
+}
+
 function parseExif(data) {
   let exif;
   if (data) {
@@ -17,7 +21,8 @@ function parseExif(data) {
     const location = `${latD}°${latM}'${latS}''${latRef} ${lonD}°${lonM}'${lonS}''${lonRef}`;
     const [hh, mm, ss] = (gps && gps.GPSTimeStamp) || [];
     const [year, month, day] = (gps && gps.GPSDateStamp.split(':')) || [];
-    const datetime = year && month && day && `${year}-${month}-${day}T${hh}:${mm}:${ss}.000Z`;
+    const datetime = year && month && day
+      && `${year}-${zeroPad(month)}-${zeroPad(day)}T${zeroPad(hh)}:${zeroPad(mm)}:${zeroPad(ss)}.000Z`;
     const width = (image && image.ImageWidth) || null;
     const height = (image && image.ImageHeight) || null;
     const camera = (image && `${image.Make} ${image.Model}`) || null;
