@@ -1,21 +1,24 @@
-module.exports = function GroupModel(db, Sequelize) {
-  const Group = db.define('group', {
+module.exports = function CvDocumentModel(db, Sequelize) {
+  const CvDocument = db.define('cv_document', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false
     },
-    name: {
+    objective: {
       type: Sequelize.STRING,
-      unique: true,
       allowNull: false
     },
     description: {
       type: Sequelize.STRING,
       allowNull: true,
+    },
+    footer: {
+      type: Sequelize.STRING,
+      allowNull: true,
     }
   });
 
-  return Group;
+  return CvDocument;
 };

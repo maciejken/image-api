@@ -40,8 +40,8 @@ function verifyToken(token) {
 async function refreshToken(oldToken) {
   try {
     const verifiedToken = verifyToken(oldToken);
-    const userId = parseInt(verifiedToken.sub);
-    const user = await User.findOne({ where: { userId }});
+    const id = parseInt(verifiedToken.sub);
+    const user = await User.findOne({ where: { id }});
     return getSignedToken(user);
   } catch (err) {
     throw new CustomError(err.message, 403);

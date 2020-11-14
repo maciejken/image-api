@@ -8,16 +8,36 @@ module.exports = function UserModel(db, Sequelize) {
       primaryKey: true,
       allowNull: false
     },
+    name: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    role: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     email: {
       type: Sequelize.STRING,
       unique: true,
       allowNull: false
     },
-    name: {
+    phone: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    avatar: {
+    github: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    linkedin: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    twitter: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    photo: {
       type: Sequelize.STRING,
       allowNull: true,
     },

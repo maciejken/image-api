@@ -1,5 +1,5 @@
-module.exports = function GroupModel(db, Sequelize) {
-  const Group = db.define('group', {
+module.exports = function OrganizationModel(db, Sequelize) {
+  const Organization = db.define('organization', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -8,14 +8,17 @@ module.exports = function GroupModel(db, Sequelize) {
     },
     name: {
       type: Sequelize.STRING,
-      unique: true,
       allowNull: false
     },
-    description: {
+    logo: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    link: {
       type: Sequelize.STRING,
       allowNull: true,
     }
   });
 
-  return Group;
+  return Organization;
 };
