@@ -14,6 +14,10 @@ module.exports = function GroupModel(db, Sequelize) {
     description: {
       type: Sequelize.STRING,
       allowNull: true,
+    },
+    logo: {
+      type: Sequelize.STRING,
+      allowNull: true,
     }
   });
 

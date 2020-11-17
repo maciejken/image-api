@@ -47,6 +47,9 @@ module.exports = {
   Group,
   CvDocument,
   Skill,
+  CvSkill,
   Organization,
   Experience,
+  CvExperience,
+  SkillExperience,
 };

@@ -60,19 +60,19 @@ function createLinker(model, { indexName, linkedIndexName }) {
 }
 
 module.exports = {
-  cvDocumentService: crudify(CvDocument, ['Experience', 'Skill']),
-  organizationService: crudify(Organization),
-  skillService: crudify(Skill),
-  experienceService: crudify(Experience, ['Skill']),
-  cvExperienceLinker: createLinker(CvExperience, {
+  cvDocument: crudify(CvDocument, ['Experience', 'Skill']),
+  organization: crudify(Organization),
+  skill: crudify(Skill),
+  experience: crudify(Experience, ['Skill']),
+  cvExperience: createLinker(CvExperience, {
     indexName: indexNames.CvDocument,
     linkedIndexName: indexNames.Experience,
   }),
-  cvSkillLinker: createLinker(CvSkill, {
+  cvSkill: createLinker(CvSkill, {
     indexName: indexNames.CvDocument,
     linkedIndexName: indexNames.Skill,
   }),
-  skillExperienceLinker: createLinker(SkillExperience, {
+  skillExperience: createLinker(SkillExperience, {
     indexName: indexNames.Skill,
     linkedIndexName: indexNames.Experience,
   }),
