@@ -2,6 +2,7 @@ const CrudService = require('../services/crud.service');
 
 function CrudController(opts) {
   this.service = new CrudService(opts);
+  this.linkedModels = opts.linkedModels;
 }
 
 CrudController.prototype.create = (req, res, next) => {
@@ -49,5 +50,26 @@ CrudController.prototype.destroy = (req, res, next) => {
     next(err);
   }
 };
+
+for (const m of this.linkedModels) {
+  CrudController.prototype[`create${m.name}`] = (req, res, next) => {
+    try {
+      const item = await this.service[`create${m.name}`]
+        (req.params.id, req.params[`${m.name}Id`]);
+      res.status(201).json(item);
+    } catch (err) {
+      next(err);
+    }
+  };
+  CrudController.prototype[`unlink${m.name}`] = (req, res, next) => {
+    try {
+      const result = await this.service[`unlink${m.name}`]
+        (req.params.id, req.params[`${m.name}Id`]);
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+}
 
 module.exports = CrudController;

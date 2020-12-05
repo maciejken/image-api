@@ -32,9 +32,9 @@ User.hasMany(Image);
 Group.hasMany(Image);
 User.belongsToMany(Group, { through: 'user_groups' });
 User.hasMany(CvDocument);
-CvDocument.belongsToMany(Experience, { through: CvExperience });
-Skill.belongsToMany(Experience, { through: SkillExperience });
-CvDocument.belongsToMany(Skill, { through: CvSkill });
+Experience.belongsToMany(CvDocument, { through: CvExperience });
+Experience.belongsToMany(Skill, { through: SkillExperience });
+Skill.belongsToMany(CvDocument, { through: CvSkill });
 Organization.hasMany(Experience);
 
 db.sync().then(() => {
