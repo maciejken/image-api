@@ -12,7 +12,7 @@ module.exports = function UserModel(db, Sequelize) {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    role: {
+    occupation: {
       type: Sequelize.STRING,
       allowNull: true,
     },

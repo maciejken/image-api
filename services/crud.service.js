@@ -1,41 +1,62 @@
 'use strict';
 const buildQuery = require('../utils/build-query');
 
-function CrudService({ model, name, linkedModels }) {
-  this.model = model;
-  this.name = name;
-  this.linkedModels = linkedModels;
-}
+module.exports = class CrudService {
+  model;
+  linkedModels;
 
-CrudService.prototype.create = (value) => this.model.create(value);
-CrudService.prototype.readOne = (id) => this.model.findByPk(id);
-CrudService.prototype.readMany = ({ page, size, order }) => {
-  const query = buildQuery({ page, size, order });
-  return this.model.findAll(query);
+  constructor(model, linkedModels) {
+    this.model = model || {};
+    this.linkedModels = linkedModels || [];
+    if (linkedModels) {
+      for (const lm of linkedModels) {
+        const [m, ...odelName] = lm.model.name;
+        const ModelName = `${m.toUpperCase()}${odelName.join('')}`;
+        this[`create${ModelName}`] = async (id, value) => {
+          const instance = await this.model.findByPk(id);
+          let createdValue;
+          if (instance) {
+            createdValue = await instance[`create${ModelName}`].call(instance, value);
+          }
+          return createdValue;
+        };
+        this[`remove${ModelName}`] = async (id, linkedItemId) => {
+          const instance = await this.model.findByPk(id);
+          let result;
+          if (instance) {
+            const removable = await instance[`get${ModelName}s`].call(instance)
+              .find(item => item.id = linkedItemId);
+            result = removable && await instance[`remove${ModelName}`].call(instance, removable);
+          }
+          return result;
+        };
+      }    
+    }
+  }
+
+  create(value) {
+    return this.model.create(value);
+  }
+
+  readOne(id) {
+    return this.model.findByPk(id, { include: this.linkedModels.map(m => ({
+      model: m.model,
+      through: m.through,
+    })) });
+  }
+
+  readMany({ page, size, order }) {
+    const query = buildQuery({ page, size, order });
+    return this.model.findAll(query);
+  }
+
+  async update(id, value) {
+    const val = await this.model.findByPk(id);
+    return val && val.update(value);
+  }
+
+  destroy(id) {
+    return this.model.destroy({ where: { id } });
+  }
+
 };
-CrudService.prototype.update = async (id, value) => {
-  const val = await this.model.findByPk(id);
-  return val && val.update(value);
-};
-CrudService.prototype.destroy = (id) => this.model.destroy({ where: { id } });
-
-for (const m of this.linkedModels) {
-  CrudService.prototype[`create${m.name}`] = async (id, value) => {
-    const itemToLink = await m.model.create(value);
-    await m.linkingModel.create({
-      [`${this.name.toLowerCase()}Id`]: id,
-      [`${m.name.toLowerCase()}Id`]: itemToLink.id,
-    });
-    return this.model.findByPk(id);
-  };
-  CrudService.prototype[`unlink${m.name}`] = (id, linkedItemId) => {
-    return m.linkingModel.destroy({
-      where: {
-        [`${this.name.toLowerCase()}Id`]: id,
-        [`${m.name.toLowerCase()}Id`]: linkedItemId
-      }
-    });
-  };
-}
-
-module.exports = CrudService;

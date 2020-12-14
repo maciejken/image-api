@@ -1,75 +1,85 @@
 const CrudService = require('../services/crud.service');
 
-function CrudController(opts) {
-  this.service = new CrudService(opts);
-  this.linkedModels = opts.linkedModels;
-}
+module.exports = class CrudController {
+  name = '';
+  service = null;
+  linkedModels = [];
 
-CrudController.prototype.create = (req, res, next) => {
-  try {
-    const createdItem = await this.service.create(req.body);
-    res.status(200).json(createdItem);
-  } catch (err) {
-    next(err);
+  constructor(model, linkedModels) {
+    this.model = model;
+    this.linkedModels = linkedModels;
+    this.service = new CrudService(model, linkedModels);
+    
+    if (linkedModels) {
+      for (const lm of linkedModels) {
+        const [m, ...odelName] = lm.model.name;
+        const ModelName = `${m.toUpperCase()}${odelName.join('')}`;
+        this[`create${ModelName}`] = async (req, res, next) => {
+          try {
+            const item = await this.service[`create${ModelName}`]
+              (req.params.id, req.params[`${lm.model.name}Id`]);
+            res.status(201).json(item);
+          } catch (err) {
+            next(err);
+          }
+        };
+        this[`remove${ModelName}`] = async (req, res, next) => {
+          try {
+            const result = await this.service[`remove${ModelName}`]
+              (req.params.id, req.params[`${lm.model.name}Id`]);
+            res.status(200).json(result);
+          } catch (err) {
+            next(err);
+          }
+        }
+      }
+    }
   }
-};
 
-CrudController.prototype.readMany = (req, res, next) => {
-  try {
-    const { order, page, size } = req.query;
-    const items = await this.service.readMany({ order, page, size });
-    res.status(200).json(items);      
-  } catch (err) {
-    next(err);
-  }  
-};
-
-CrudController.prototype.readOne = (req, res, next) => {
-  try {
-    const item = await this.service.readOne(req.params.id);
-    res.status(200).json(item);      
-  } catch (err) {
-    next(err);
-  }
-};
-
-CrudController.prototype.update = (req, res, next) => {
-  try {
-    const updatedItem = await this.service.update(req.params.id, req.body);
-    res.status(200).json(updatedItem);
-  } catch (err) {
-    next(err);
-  }
-};
-
-CrudController.prototype.destroy = (req, res, next) => {
-  try {
-    const result = await this.service.destroy(req.params.id);
-    res.status(200).json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
-for (const m of this.linkedModels) {
-  CrudController.prototype[`create${m.name}`] = (req, res, next) => {
+  create = async (req, res, next) => {
     try {
-      const item = await this.service[`create${m.name}`]
-        (req.params.id, req.params[`${m.name}Id`]);
-      res.status(201).json(item);
+      const createdItem = await this.service.create(req.body);
+      res.status(200).json(createdItem);
     } catch (err) {
       next(err);
     }
-  };
-  CrudController.prototype[`unlink${m.name}`] = (req, res, next) => {
+  }
+
+  readMany = async (req, res, next) => {
     try {
-      const result = await this.service[`unlink${m.name}`]
-        (req.params.id, req.params[`${m.name}Id`]);
+      const { order, page, size } = req.query;
+      const items = await this.service.readMany({ order, page, size });
+      res.status(200).json(items);      
+    } catch (err) {
+      next(err);
+    }  
+  }
+
+  readOne = async (req, res, next) => {
+    try {
+      const item = await this.service.readOne(req.params.id);
+      res.status(200).json(item);      
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  update = async (req, res, next) => {
+    try {
+      const updatedItem = await this.service.update(req.params.id, req.body);
+      res.status(200).json(updatedItem);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  destroy = async (req, res, next) => {
+    try {
+      const result = await this.service.destroy(req.params.id);
       res.status(200).json(result);
     } catch (err) {
       next(err);
     }
   }
-}
 
-module.exports = CrudController;
+};

@@ -1,15 +1,15 @@
 const Sequelize = require('sequelize');
+const logger = require('../libs/logger')('model');
+
 const UserModel = require('./user.model');
 const GroupModel = require('./group.model');
 const ImageModel = require('./image.model');
-const CvDocumentModel = require('./cv-document.model');
+const CvModel = require('./cv.model');
 const ExperienceModel = require('./experience.model');
-const CvExperienceModel = require('./cv-experience.model');
 const SkillModel = require('./skill.model');
-const CvSkillModel = require('./cv-skill.model');
-const SkillExperienceModel = require('./skill-experience.model');
 const OrganizationModel = require('./organization.model');
-const logger = require('../libs/logger')('model');
+const NoteModel = require('./note.model');
+const { Tables } = require('../enum');
 
 const db = new Sequelize({
   dialect: process.env.SEQUELIZE_DIALECT,
@@ -20,21 +20,20 @@ const db = new Sequelize({
 const User = UserModel(db, Sequelize);
 const Group = GroupModel(db, Sequelize);
 const Image = ImageModel(db, Sequelize);
-const CvDocument = CvDocumentModel(db, Sequelize);
+const Cv = CvModel(db, Sequelize);
 const Experience = ExperienceModel(db, Sequelize);
-const CvExperience = CvExperienceModel(db, Sequelize);
 const Skill = SkillModel(db, Sequelize);
-const CvSkill = CvSkillModel(db, Sequelize);
-const SkillExperience = SkillExperienceModel(db, Sequelize);
 const Organization = OrganizationModel(db, Sequelize);
+const Note = NoteModel(db, Sequelize);
 
 User.hasMany(Image);
 Group.hasMany(Image);
-User.belongsToMany(Group, { through: 'user_groups' });
-User.hasMany(CvDocument);
-Experience.belongsToMany(CvDocument, { through: CvExperience });
-Experience.belongsToMany(Skill, { through: SkillExperience });
-Skill.belongsToMany(CvDocument, { through: CvSkill });
+User.belongsToMany(Group, { through: Tables.UserGroup });
+Cv.belongsTo(User);
+Cv.belongsToMany(Experience, { through: Tables.CvExperience });
+Cv.belongsToMany(Skill, { through: Tables.CvSkill });
+Cv.belongsToMany(Note, { through: Tables.CvNote });
+Experience.belongsToMany(Skill, { through: Tables.SkillExperience });
 Organization.hasMany(Experience);
 
 db.sync().then(() => {
@@ -45,11 +44,9 @@ module.exports = {
   Image,
   User,
   Group,
-  CvDocument,
+  Cv,
   Skill,
-  CvSkill,
   Organization,
   Experience,
-  CvExperience,
-  SkillExperience,
+  Note,
 };

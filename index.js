@@ -34,9 +34,7 @@ app.use(`${apiPrefix}/users`, require('./routes/user.routes'));
 app.use(`${apiPrefix}/groups`, require('./routes/group.routes'));
 app.use(`${apiPrefix}/images`, require('./routes/images.routes'));
 app.use(`${apiPrefix}/uploads`, require('./routes/uploads.routes'));
-app.get(`${apiPrefix}/cv/1`, (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public/cv', 'document.json'));
-});
+app.use(`${apiPrefix}/cv`, require('./routes/cv.routes'));
 
 app.use(express.static('public'));
 app.get('/cv/*', (req, res) => {
