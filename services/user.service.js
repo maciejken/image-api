@@ -1,7 +1,7 @@
 'use strict';
 
 const { User } = require('../model');
-const buildQuery = require('../utils/build-query');
+const buildQuery = require('../utils');
 
 module.exports = {
   getUsers({ order, page, size }) {

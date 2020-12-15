@@ -1,5 +1,5 @@
 const { Image } = require('../model');
-const buildQuery = require('../utils/build-query');
+const buildQuery = require('../utils');
 
 module.exports = {
   getImages({ order, page, size }) {

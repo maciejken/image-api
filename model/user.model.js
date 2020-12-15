@@ -1,45 +1,18 @@
 const crypto = require('crypto');
+const { Tables } = require('../enum');
 
 module.exports = function UserModel(db, Sequelize) {
-  const User = db.define('user', {
+  const User = db.define(Tables.User, {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false
     },
-    name: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    occupation: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
     email: {
       type: Sequelize.STRING,
       unique: true,
       allowNull: false
-    },
-    phone: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    github: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    linkedin: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    twitter: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    photo: {
-      type: Sequelize.STRING,
-      allowNull: true,
     },
     password: {
       type: Sequelize.STRING,

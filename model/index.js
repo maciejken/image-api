@@ -6,9 +6,8 @@ const GroupModel = require('./group.model');
 const ImageModel = require('./image.model');
 const CvModel = require('./cv.model');
 const ExperienceModel = require('./experience.model');
-const SkillModel = require('./skill.model');
-const OrganizationModel = require('./organization.model');
-const NoteModel = require('./note.model');
+const DetailModel = require('./detail.model');
+
 const { Tables } = require('../enum');
 
 const db = new Sequelize({
@@ -18,35 +17,31 @@ const db = new Sequelize({
 });
 
 const User = UserModel(db, Sequelize);
+const Detail = DetailModel(db, Sequelize);
 const Group = GroupModel(db, Sequelize);
 const Image = ImageModel(db, Sequelize);
 const Cv = CvModel(db, Sequelize);
 const Experience = ExperienceModel(db, Sequelize);
-const Skill = SkillModel(db, Sequelize);
-const Organization = OrganizationModel(db, Sequelize);
-const Note = NoteModel(db, Sequelize);
 
 User.hasMany(Image);
+User.hasMany(Detail);
+User.hasMany(Cv);
 Group.hasMany(Image);
+Group.hasMany(Detail);
 User.belongsToMany(Group, { through: Tables.UserGroup });
-Cv.belongsTo(User);
-Cv.belongsToMany(Experience, { through: Tables.CvExperience });
-Cv.belongsToMany(Skill, { through: Tables.CvSkill });
-Cv.belongsToMany(Note, { through: Tables.CvNote });
-Experience.belongsToMany(Skill, { through: Tables.SkillExperience });
-Organization.hasMany(Experience);
+Cv.hasMany(Detail);
+Cv.hasMany(Experience);
+Experience.hasMany(Detail);
 
 db.sync().then(() => {
   logger.info(`database synced`);
 });
 
 module.exports = {
+  Cv,
+  Detail,
+  Experience,
+  Group,
   Image,
   User,
-  Group,
-  Cv,
-  Skill,
-  Organization,
-  Experience,
-  Note,
 };

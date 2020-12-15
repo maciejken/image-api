@@ -1,7 +1,7 @@
 'use strict';
 
 const { Group } = require('../model');
-const buildQuery = require('../utils/build-query');
+const buildQuery = require('../utils');
 
 module.exports = {
   getGroups({ order, page, size }) {

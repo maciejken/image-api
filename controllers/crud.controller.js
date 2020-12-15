@@ -1,7 +1,7 @@
 const CrudService = require('../services/crud.service');
+const { toTitleCase } = require('../utils');
 
 module.exports = class CrudController {
-  name = '';
   service = null;
   linkedModels = [];
 
@@ -12,13 +12,21 @@ module.exports = class CrudController {
     
     if (linkedModels) {
       for (const lm of linkedModels) {
-        const [m, ...odelName] = lm.model.name;
-        const ModelName = `${m.toUpperCase()}${odelName.join('')}`;
+        const ModelName = lm.model && toTitleCase(lm.model.name);
         this[`create${ModelName}`] = async (req, res, next) => {
           try {
             const item = await this.service[`create${ModelName}`]
               (req.params.id, req.params[`${lm.model.name}Id`]);
             res.status(201).json(item);
+          } catch (err) {
+            next(err);
+          }
+        };
+        this[`get${ModelName}`] = async (req, res, next) => {
+          try {
+            const item = await this.service[`get${ModelName}`]
+              (req.params.id, req.params[`${lm.model.name}Id`]);
+            res.status(200).json(item);
           } catch (err) {
             next(err);
           }
@@ -31,7 +39,7 @@ module.exports = class CrudController {
           } catch (err) {
             next(err);
           }
-        }
+        };
       }
     }
   }

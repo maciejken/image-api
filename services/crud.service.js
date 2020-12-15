@@ -1,5 +1,6 @@
 'use strict';
-const buildQuery = require('../utils/build-query');
+
+const { buildQuery, toTitleCase } = require('../utils');
 
 module.exports = class CrudService {
   model;
@@ -10,8 +11,7 @@ module.exports = class CrudService {
     this.linkedModels = linkedModels || [];
     if (linkedModels) {
       for (const lm of linkedModels) {
-        const [m, ...odelName] = lm.model.name;
-        const ModelName = `${m.toUpperCase()}${odelName.join('')}`;
+        const ModelName = lm.model && toTitleCase(lm.model.name);
         this[`create${ModelName}`] = async (id, value) => {
           const instance = await this.model.findByPk(id);
           let createdValue;
@@ -19,6 +19,17 @@ module.exports = class CrudService {
             createdValue = await instance[`create${ModelName}`].call(instance, value);
           }
           return createdValue;
+        };
+        this[`get${ModelName}`] = async (id, linkedItemId) => {
+          const instance = await this.model.findByPk(id);
+          const { include } = lm;
+          const linkedInstance = await lm.model.findByPk(linkedItemId, { include });
+          let val = null;
+          const isLinked = await instance[`has${ModelName}`].call(instance, linkedInstance);
+          if (isLinked) {
+            val = linkedInstance;
+          }
+          return val;
         };
         this[`remove${ModelName}`] = async (id, linkedItemId) => {
           const instance = await this.model.findByPk(id);
@@ -39,10 +50,11 @@ module.exports = class CrudService {
   }
 
   readOne(id) {
-    return this.model.findByPk(id, { include: this.linkedModels.map(m => ({
-      model: m.model,
-      through: m.through,
-    })) });
+    return this.model.findByPk(id, {
+      include: this.linkedModels
+        .filter(lm => lm.eager)
+        .map(lm => ({ model: lm.model, through: lm.through }))
+      });
   }
 
   readMany({ page, size, order }) {
