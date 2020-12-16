@@ -1,45 +1,49 @@
 'use strict';
 
-const { buildQuery, toTitleCase } = require('../utils');
+const { buildQuery, toCamelCase, uncapitalize } = require('../utils');
 
 module.exports = class CrudService {
   model;
   linkedModels;
+  identifier;
 
   constructor(model, linkedModels) {
     this.model = model || {};
     this.linkedModels = linkedModels || [];
+    this.identifier = `${model.name}Id`;
     if (linkedModels) {
       for (const lm of linkedModels) {
-        const ModelName = lm.model && toTitleCase(lm.model.name);
+        const ModelName = lm.model && toCamelCase(lm.model.name);
+        const subIdentifier = `${uncapitalize(ModelName)}Id`;
         this[`create${ModelName}`] = async (id, value) => {
-          const instance = await this.model.findByPk(id);
-          let createdValue;
-          if (instance) {
-            createdValue = await instance[`create${ModelName}`].call(instance, value);
-          }
-          return createdValue;
+          value = { ...value, [this.identifier]: id };
+          return lm.model.create(value);
         };
-        this[`get${ModelName}`] = async (id, linkedItemId) => {
-          const instance = await this.model.findByPk(id);
+        this[`get${ModelName}`] = async (id, subId) => {
           const { include } = lm;
-          const linkedInstance = await lm.model.findByPk(linkedItemId, { include });
-          let val = null;
-          const isLinked = await instance[`has${ModelName}`].call(instance, linkedInstance);
-          if (isLinked) {
-            val = linkedInstance;
-          }
-          return val;
+          return lm.model.findOne({
+            where: {
+              [this.identifier]: id,
+              id: subId,
+            },
+            include,
+          });
         };
-        this[`remove${ModelName}`] = async (id, linkedItemId) => {
-          const instance = await this.model.findByPk(id);
-          let result;
-          if (instance) {
-            const removable = await instance[`get${ModelName}s`].call(instance)
-              .find(item => item.id = linkedItemId);
-            result = removable && await instance[`remove${ModelName}`].call(instance, removable);
-          }
-          return result;
+        this[`get${ModelName}s`] = async (id) => {
+          return lm.model.findAll({ where: { [this.identifier]: id }});
+        };
+        this[`update${ModelName}`] = async (id, subId, value) => {
+          const instance = await lm.model.findOne({ where: {
+            [this.identifier]: id,
+            id: subId,
+          } });
+          return instance && instance.update(value);
+        };
+        this[`remove${ModelName}`] = async (id, subId) => {
+          return lm.model.destroy({ where: {
+            [this.identifier]: id,
+            [subIdentifier]: subId,
+          } });
         };
       }    
     }
@@ -53,7 +57,14 @@ module.exports = class CrudService {
     return this.model.findByPk(id, {
       include: this.linkedModels
         .filter(lm => lm.eager)
-        .map(lm => ({ model: lm.model, through: lm.through }))
+        .map(lm => {
+          const { model, through, as } = lm;
+          const val = { model, through, as };
+          if (lm.include) {
+            val.include = lm.include;
+          }
+          return val;
+        })
       });
   }
 

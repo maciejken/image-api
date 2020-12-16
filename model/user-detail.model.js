@@ -1,34 +1,38 @@
 const { Tables } = require('../enum');
 
-module.exports = function ExperienceModel(db, Sequelize) {
-  const Experience = db.define(Tables.Experience, {
+module.exports = function UserDetailModel(db, Sequelize) {
+  const UserDetail = db.define(Tables.UserDetail, {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false
     },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     name: {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     type: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    description: {
+    content: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    link: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    startDate: {
-      type: Sequelize.STRING,
+    order: {
+      type: Sequelize.INTEGER,
       allowNull: true,
     },
-    endDate: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    }, 
   });
 
-  return Experience;
+  return UserDetail;
 };

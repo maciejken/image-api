@@ -1,18 +1,18 @@
 const { Tables } = require('../enum');
 
-module.exports = function DetailModel(db, Sequelize) {
-  const Detail = db.define(Tables.Detail, {
+module.exports = function GroupDetailModel(db, Sequelize) {
+  const GroupDetail = db.define(Tables.GroupDetail, {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false
     },
-    name: {
-      type: Sequelize.STRING,
+    groupId: {
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
-    type: {
+    name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -30,5 +30,5 @@ module.exports = function DetailModel(db, Sequelize) {
     },
   });
 
-  return Detail;
+  return GroupDetail;
 };

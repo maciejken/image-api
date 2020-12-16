@@ -13,14 +13,14 @@ module.exports = function GroupModel(db, Sequelize) {
       unique: true,
       allowNull: false
     },
-    // description: {
-    //   type: Sequelize.STRING,
-    //   allowNull: true,
-    // },
-    // logo: {
-    //   type: Sequelize.STRING,
-    //   allowNull: true,
-    // }
+    description: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    logo: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    }
   });
 
   return Group;

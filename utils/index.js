@@ -5,14 +5,26 @@ function buildQuery({ order, page, size }) {
   return { order, limit, offset };
 };
 
-function toTitleCase(word) {
+function capitalize(word) {
   const W = word[0].toUpperCase();
   const ord = word.slice(1);
   return W + ord;  
 }
 
+function toCamelCase(text) {
+  const words = text.split(/_|\s/);
+  return words.map(capitalize).join('');
+}
+
+function uncapitalize(word) {
+  const w = word[0].toLowerCase();
+  const ord = word.slice(1);
+  return w + ord;
+}
+
 module.exports = {
   buildQuery,
-  toTitleCase,
+  toCamelCase,
+  uncapitalize,
 };
   

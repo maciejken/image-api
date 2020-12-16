@@ -12,8 +12,10 @@ const logger = require('./libs/logger')('server');
 const errorHandler = require('./middleware/errors/error-handler');
 
 const app = express();
+const allowedOrigin = process.env.ACCESS_CONTROL_ALLOW_ORIGIN;
+logger.debug(`access control allowed origin is "${allowedOrigin}"`);
 app.use(cors({
-  origin: process.env.ACCESS_CONTROL_ALLOW_ORIGIN,
+  origin: allowedOrigin,
   credentials: true,
 }));
 app.use(bodyParser.json());
@@ -28,6 +30,7 @@ const logRequestStart = (req, res, next) => {
 app.use(logRequestStart);
 
 const apiPrefix = process.env.API_PREFIX;
+logger.debug(`API prefix is "${apiPrefix}"`);
 
 app.use(`${apiPrefix}/auth`, require('./routes/auth.routes'))
 app.use(`${apiPrefix}/users`, require('./routes/user.routes'));
@@ -35,6 +38,7 @@ app.use(`${apiPrefix}/groups`, require('./routes/group.routes'));
 app.use(`${apiPrefix}/images`, require('./routes/images.routes'));
 app.use(`${apiPrefix}/uploads`, require('./routes/uploads.routes'));
 app.use(`${apiPrefix}/cv`, require('./routes/cv.routes'));
+app.use(`${apiPrefix}/experiences`, require('./routes/experience.routes'));
 
 app.use(express.static('public'));
 app.get('/cv/*', (req, res) => {
@@ -53,6 +57,7 @@ app.use(errorHandler);
 
 const port = process.env.PORT;
 const certDir = process.env.CERT_DIR;
+logger.debug(`certificate/key loaded from "${certDir}"`);
 
 const credentials = {
   key: fs.readFileSync(`${certDir}/privkey.pem`),

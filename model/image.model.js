@@ -15,7 +15,27 @@ module.exports = function ImageModel(db, Sequelize) {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    // caption: {
+    caption: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    description: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    width: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    },
+    height: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    },
+    // size: {
+    //   type: Sequelize.INTEGER,
+    //   allowNull: true,
+    // },
+    // datetime: {
     //   type: Sequelize.STRING,
     //   allowNull: true,
     // },
@@ -23,28 +43,8 @@ module.exports = function ImageModel(db, Sequelize) {
     //   type: Sequelize.STRING,
     //   allowNull: true,
     // },
-    // description: {
-    //   type: Sequelize.STRING,
-    //   allowNull: true,
-    // },
-    // datetime: {
-    //   type: Sequelize.STRING,
-    //   allowNull: true,
-    // },
     // camera: {
     //   type: Sequelize.STRING,
-    //   allowNull: true,
-    // },
-    // width: {
-    //   type: Sequelize.INTEGER,
-    //   allowNull: true,
-    // },
-    // height: {
-    //   type: Sequelize.INTEGER,
-    //   allowNull: true,
-    // },
-    // size: {
-    //   type: Sequelize.INTEGER,
     //   allowNull: true,
     // },
   });

@@ -1,22 +1,25 @@
 const CrudService = require('../services/crud.service');
-const { toTitleCase } = require('../utils');
+const { toCamelCase, uncapitalize } = require('../utils');
 
 module.exports = class CrudController {
   service = null;
   linkedModels = [];
+  identifier;
 
   constructor(model, linkedModels) {
     this.model = model;
     this.linkedModels = linkedModels;
     this.service = new CrudService(model, linkedModels);
+    this.identifier = `${model.name}Id`;
     
     if (linkedModels) {
       for (const lm of linkedModels) {
-        const ModelName = lm.model && toTitleCase(lm.model.name);
+        const ModelName = lm.model && toCamelCase(lm.model.name);
+        const subIdentifier = `${uncapitalize(ModelName)}Id`;
         this[`create${ModelName}`] = async (req, res, next) => {
           try {
             const item = await this.service[`create${ModelName}`]
-              (req.params.id, req.params[`${lm.model.name}Id`]);
+              (req.params[this.identifier], req.body);
             res.status(201).json(item);
           } catch (err) {
             next(err);
@@ -25,8 +28,26 @@ module.exports = class CrudController {
         this[`get${ModelName}`] = async (req, res, next) => {
           try {
             const item = await this.service[`get${ModelName}`]
-              (req.params.id, req.params[`${lm.model.name}Id`]);
+              (req.params[this.identifier], req.params[subIdentifier]);
             res.status(200).json(item);
+          } catch (err) {
+            next(err);
+          }
+        };
+        this[`get${ModelName}s`] = async (req, res, next) => {
+          try {
+            const items = await this.service[`get${ModelName}s`]
+              .call(this.service, req.params[this.identifier]);
+            res.status(200).json(items);
+          } catch (err) {
+            next(err);
+          }
+        };
+        this[`update${ModelName}`] = async (req, res, next) => {
+          try {
+            const updatedItem = await this.service[`update${ModelName}`]
+              (req.params[this.identifier], req.params[subIdentifier], req.body);
+            res.status(200).json(updatedItem);
           } catch (err) {
             next(err);
           }
@@ -34,7 +55,7 @@ module.exports = class CrudController {
         this[`remove${ModelName}`] = async (req, res, next) => {
           try {
             const result = await this.service[`remove${ModelName}`]
-              (req.params.id, req.params[`${lm.model.name}Id`]);
+              (req.params[this.identifier], req.params[subIdentifier]);
             res.status(200).json(result);
           } catch (err) {
             next(err);
@@ -65,7 +86,7 @@ module.exports = class CrudController {
 
   readOne = async (req, res, next) => {
     try {
-      const item = await this.service.readOne(req.params.id);
+      const item = await this.service.readOne(req.params[this.identifier]);
       res.status(200).json(item);      
     } catch (err) {
       next(err);
@@ -74,7 +95,7 @@ module.exports = class CrudController {
 
   update = async (req, res, next) => {
     try {
-      const updatedItem = await this.service.update(req.params.id, req.body);
+      const updatedItem = await this.service.update(req.params[this.identifier], req.body);
       res.status(200).json(updatedItem);
     } catch (err) {
       next(err);
@@ -83,7 +104,7 @@ module.exports = class CrudController {
 
   destroy = async (req, res, next) => {
     try {
-      const result = await this.service.destroy(req.params.id);
+      const result = await this.service.destroy(req.params[this.identifier]);
       res.status(200).json(result);
     } catch (err) {
       next(err);
