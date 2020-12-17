@@ -2,16 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  User, UserDetail,
+  User, UserDetail, UserGroup,
   Group,
-  Image,
   Cv, CvDetail,
   Experience, ExperienceDetail,
 } = require('../model');
-const { Regex, Tables } = require('../enum');
+const { Regex } = require('../enum');
 const CrudController = require('../controllers/crud.controller');
 const userController = new CrudController(User, [
-  { model: Group, through: Tables.UserGroup, eager: true },
+  { model: Group, through: UserGroup, eager: true },
   { model: UserDetail, eager: true, as: 'details' },
   {
     model: Cv,
@@ -39,12 +38,14 @@ const { QueryCommon, NewUserData, UserData } = require('../middleware/validation
 
 router.get(`/`, check(QueryCommon), verifyAdmin, userController.readMany)
 router.post(`/`, check(NewUserData), userController.create);
-  
 router.get(`/:userId(${Regex.positiveInt})`, userController.readOne);
 router.patch(`/:userId(${Regex.positiveInt})`, check(UserData), verifyAdmin, userController.update);
 router.delete(`/:userId(${Regex.positiveInt})`, verifyAdmin, userController.destroy);
 
+router.get(`/:userId(${Regex.positiveInt})/groups`, verifyAdmin, userController.getGroups);
 router.post(`/:userId(${Regex.positiveInt})/groups`, verifyAdmin, userController.createGroup);
+router.get(`/:userId(${Regex.positiveInt})/groups/:groupId`, verifyAdmin, userController.getGroup);
+router.patch(`/:userId(${Regex.positiveInt})/groups/:groupId`, verifyAdmin, userController.updateGroup);
 router.delete(
   `/:userId(${Regex.positiveInt})/groups/:groupId(${Regex.positiveInt})`,
   verifyAdmin, userController.removeGroup,

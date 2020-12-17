@@ -1,18 +1,28 @@
 const express = require('express');
 const router = express.Router();
 
-const groupController = require('../controllers/group.controller');
+const { Group, GroupDetail } = require('../model');
+const { Regex } = require('../enum');
+const CrudController = require('../controllers/crud.controller');
+const groupController = new CrudController(Group, [
+  { model: GroupDetail, eager: true, as: 'details' },
+]);
+
+const { verifyAdmin } = require('../middleware/auth');
 const check = require('../middleware/validation/check');
 const { QueryCommon, NewGroupData, GroupData } = require('../middleware/validation/schemas');
-const { verifyAdmin } = require('../middleware/auth');
-const { Regex } = require('../enum');
 
-router.get(`/`, check(QueryCommon), verifyAdmin, groupController.getGroups);
-router.post(`/`, check(NewGroupData), verifyAdmin, groupController.createGroup);
+router.get(`/`, check(QueryCommon), verifyAdmin, groupController.readMany)
+router.post(`/`, check(NewGroupData), groupController.create);
+  
+router.get(`/:groupId(${Regex.positiveInt})`, groupController.readOne);
+router.patch(`/:groupId(${Regex.positiveInt})`, check(GroupData), verifyAdmin, groupController.update);
+router.delete(`/:groupId(${Regex.positiveInt})`, verifyAdmin, groupController.destroy);
 
-router.get(`/:groupId(${Regex.positiveInt})`, verifyAdmin, groupController.getGroup);
-router.post(`/:groupId(${Regex.positiveInt})`, verifyAdmin, groupController.addUserToGroup);
-router.patch(`/:groupId(${Regex.positiveInt})`, check(GroupData), verifyAdmin, groupController.updateGroup);
-router.delete(`/:groupId(${Regex.positiveInt})`, verifyAdmin, groupController.removeGroup);
+router.get(`/:groupId(${Regex.positiveInt})/details`, groupController.getGroupDetails);
+router.post(`/:groupId(${Regex.positiveInt})/details`, groupController.createGroupDetail);
+router.get(`/:groupId(${Regex.positiveInt})/details/:groupDetailId`, groupController.getGroupDetail);
+router.patch(`/:groupId(${Regex.positiveInt})/details/:groupDetailId`, groupController.updateGroupDetail);
+router.delete(`/:groupId(${Regex.positiveInt})/details/:groupDetailId`, groupController.removeGroupDetail);
 
 module.exports = router;

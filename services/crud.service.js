@@ -14,36 +14,101 @@ module.exports = class CrudService {
     if (linkedModels) {
       for (const lm of linkedModels) {
         const ModelName = lm.model && toCamelCase(lm.model.name);
-        const subIdentifier = `${uncapitalize(ModelName)}Id`;
+        const subIdentifier = uncapitalize(ModelName) + 'Id';
+        const { through } = lm;
         this[`create${ModelName}`] = async (id, value) => {
-          value = { ...value, [this.identifier]: id };
-          return lm.model.create(value);
+          let val;
+          if (through) {
+            let instance = await lm.model.findOne({ where: value });
+            const throughVal = {
+                [this.identifier]: id,
+                [subIdentifier]: instance.id,              
+            };
+            if (instance) {
+              const throughInstance = await through.findOne({ where: throughVal });
+              !throughInstance && await through.create(throughVal);
+            } else {
+              instance = await lm.model.create(value);
+              await through.create(throughVal);              
+            }
+            val = instance;
+          } else {
+            value = { ...value, [this.identifier]: id };
+            val = await lm.model.create(value);
+          }
+          return val;
         };
         this[`get${ModelName}`] = async (id, subId) => {
           const { include } = lm;
-          return lm.model.findOne({
-            where: {
-              [this.identifier]: id,
-              id: subId,
-            },
-            include,
-          });
+          let val = null;
+          if (through) {
+            const throughInstance = await through.findOne({
+              where: {
+                [this.identifier]: id,
+                [subIdentifier]: subId,
+              }
+            });
+            val = throughInstance && await lm.model.findByPk(subId);
+          } else {
+            val = await lm.model.findOne({
+              where: {
+                [this.identifier]: id,
+                id: subId,
+              },
+              include,
+            });
+          }
+          return val;
         };
         this[`get${ModelName}s`] = async (id) => {
-          return lm.model.findAll({ where: { [this.identifier]: id }});
+          let val;
+          if (through) {
+            const throughInstances = await through.findAll({
+              where: { [this.identifier]: id }
+            });
+            const ids = throughInstances.map(instance => instance[subIdentifier]);
+            val = await lm.model.findAll({ where: { id: ids } });
+          } else {
+            val = await lm.model.findAll({ where: { [this.identifier]: id }});
+          }
+          return val;
         };
         this[`update${ModelName}`] = async (id, subId, value) => {
-          const instance = await lm.model.findOne({ where: {
-            [this.identifier]: id,
-            id: subId,
-          } });
-          return instance && instance.update(value);
+          let val;
+          if (through) {
+            const throughInstance = await through.findOne({
+              where: {
+                [this.identifier]: id,
+                [subIdentifier]: subId,
+              }
+            });
+            const instance = throughInstance && await lm.model.findByPk(subId);
+            val = instance && instance.update(value);
+          } else {
+            const instance = await lm.model.findOne({ where: {
+              [this.identifier]: id,
+              id: subId,
+            } });
+            val = instance && await instance.update(value);            
+          }
+          return val;
         };
         this[`remove${ModelName}`] = async (id, subId) => {
-          return lm.model.destroy({ where: {
-            [this.identifier]: id,
-            [subIdentifier]: subId,
-          } });
+          let val;
+          if (through) {
+            val = await through.destroy({
+              where: {
+                [this.identifier]: id,
+                [subIdentifier]: subId,
+            }});
+          } else {
+            val = await lm.model.destroy({
+              where: {
+                [this.identifier]: id,
+                id: subId,
+            }});
+          }
+          return val;
         };
       }    
     }
@@ -74,8 +139,8 @@ module.exports = class CrudService {
   }
 
   async update(id, value) {
-    const val = await this.model.findByPk(id);
-    return val && val.update(value);
+    const instance = await this.model.findByPk(id);
+    return instance && instance.update(value);
   }
 
   destroy(id) {
