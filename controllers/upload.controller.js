@@ -1,6 +1,8 @@
 const path = require('path');
 const fileService = require('../services/file.service');
-const imageService = require('../services/image.service');
+const { ImageSettings } = require('../config');
+const CrudService = require('../services/crud.service');
+const imageService = new CrudService(ImageSettings);
 const { pathToUploads, pathToThumbnails } = require('../config');
 
 module.exports = {
@@ -37,16 +39,17 @@ module.exports = {
       const images = await Promise.all(req.files.map(f => {
         const { filename, size } = f;
         const { location, datetime, camera, width, height } = f.exif;
-        return imageService.createImage({
+        // TODO: bulk create image details
+        return imageService.create({
           filename,
           userId,
           groupId,
-          location,
-          datetime,
-          camera,
+          // location,
+          // datetime,
+          // camera,
           width,
           height,
-          size,
+          // size,
         });
       }));
       res.status(201).json(images);
@@ -57,12 +60,12 @@ module.exports = {
   async removeImage(req, res, next) {
     try {
       const { filename } = req.params;
-      const image = await imageService.getImage(filename);
+      const image = await imageService.getOne(filename);
       const { userId } = res.locals;
       if (userId === image.userId) {
         const removeMainFile = fileService.removeFile(path.join(pathToUploads, filename));
         const removeThumbnail = fileService.removeFile(path.join(pathToThumbnails, filename));
-        const removeFromDb = imageService.removeImage(filename);
+        const removeFromDb = imageService.remove(filename);
         await Promise.all([removeMainFile, removeThumbnail, removeFromDb]);
         res.status(200).json({ message: `${filename} upload removed` });        
       } else {

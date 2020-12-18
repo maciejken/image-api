@@ -1,38 +1,27 @@
 const express = require('express');
 const path = require('path');
 const router = express.Router();
-const { Experience, ExperienceDetail } = require('../model');
+const { ExperienceSettings } = require('../config');
 const { Regex } = require('../enum');
 
 const CrudController = require('../controllers/crud.controller');
-const expController = new CrudController(Experience, [
-  { model: ExperienceDetail, as: 'details', eager: true },
-]);
+const expController = new CrudController(ExperienceSettings);
 
 const check = require('../middleware/validation/check');
 const { QueryCommon } = require('../middleware/validation/schemas');
 const { verifyAdmin } = require('../middleware/auth');
 
-router.get(`/`, check(QueryCommon), expController.readMany);
+router.get(`/`, check(QueryCommon), expController.getMany);
 router.post(`/`, expController.create);
 
-router.get(`/:experienceId(${Regex.positiveInt})`, expController.readOne);
-router.patch(`/:experienceId(${Regex.positiveInt})`, expController.update);
-router.delete(`/:experienceId(${Regex.positiveInt})`, expController.destroy);
+router.get(`/:id(${Regex.positiveInt})`, expController.getOne);
+router.patch(`/:id(${Regex.positiveInt})`, expController.update);
+router.delete(`/:id(${Regex.positiveInt})`, expController.remove);
 
-router.get(`/:experienceId(${Regex.positiveInt})/details`, expController.getExperienceDetails);
-router.post(`/:experienceId(${Regex.positiveInt})/details`, expController.createExperienceDetail);
-router.get(
-  `/:experienceId(${Regex.positiveInt})/details/:experienceDetailId`,
-  expController.getExperienceDetail
-  );
-router.patch(
-  `/:experienceId(${Regex.positiveInt})/details/:experienceDetailId`,
-  expController.updateExperienceDetail
-);
-router.delete(
-  `/:experienceId(${Regex.positiveInt})/details/:experienceDetailId`,
-  expController.removeExperienceDetail
-);
+router.get(`/:id(${Regex.positiveInt})/details`, expController.getExperienceDetails);
+router.post(`/:id(${Regex.positiveInt})/details`, expController.createExperienceDetail);
+router.get(`/:id(${Regex.positiveInt})/details/:detailId`, expController.getExperienceDetail);
+router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, expController.updateExperienceDetail);
+router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, expController.removeExperienceDetail);
 
 module.exports = router;

@@ -37,10 +37,14 @@ Cv.hasMany(Experience);
 Experience.hasMany(ExperienceDetail, { as: 'details' });
 User.hasMany(UserDetail, { as: 'details' });
 User.hasMany(Image);
-Cv.belongsTo(User);
+Image.belongsTo(User);
 Group.hasMany(Image);
+Image.belongsTo(Group);
+User.hasMany(Cv);
+Cv.belongsTo(User);
 Group.hasMany(GroupDetail, { as: 'details' });
 User.belongsToMany(Group, { through: UserGroup });
+Group.belongsToMany(User, { through: UserGroup });
 
 db.sync().then(() => {
   logger.info(`database synced`);

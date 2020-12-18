@@ -1,61 +1,76 @@
 const CrudService = require('../services/crud.service');
-const { toCamelCase, uncapitalize } = require('../utils');
 
 module.exports = class CrudController {
   service = null;
   linkedModels = [];
-  identifier;
+  identifierKey;
+  foreignKey;
 
-  constructor(model, linkedModels) {
+  constructor(settings) {
+    const { model, linkedModels, identifierKey, foreignKey } = settings;
     this.model = model;
     this.linkedModels = linkedModels;
-    this.service = new CrudService(model, linkedModels);
-    this.identifier = `${model.name}Id`;
+    this.identifierKey = identifierKey || 'id';
+    this.foreignKey = foreignKey;
+    this.service = new CrudService(settings);
     
     if (linkedModels) {
       for (const lm of linkedModels) {
-        const ModelName = lm.model && toCamelCase(lm.model.name);
-        const subIdentifier = `${uncapitalize(ModelName)}Id`;
-        this[`create${ModelName}`] = async (req, res, next) => {
+        const identifierKey = lm.identifierKey || 'id';
+        this[`create${lm.modelName}`] = async (req, res, next) => {
           try {
-            const item = await this.service[`create${ModelName}`]
-              (req.params[this.identifier], req.body);
-            res.status(201).json(item);
+            const value = {
+              ...req.body,
+              [this.foreignKey]: req.params[this.identifierKey],
+            };
+            const [item, isNew] = await this.service[`create${lm.modelName}`](value);
+            res.status(isNew ? 201 : 200).json(item);
           } catch (err) {
             next(err);
           }
         };
-        this[`get${ModelName}`] = async (req, res, next) => {
+        this[`get${lm.modelName}`] = async (req, res, next) => {
           try {
-            const item = await this.service[`get${ModelName}`]
-              (req.params[this.identifier], req.params[subIdentifier]);
+            const value = {
+              [this.foreignKey]: req.params[this.identifierKey],
+              [identifierKey]: req.params[lm.otherKey]
+            };
+            const item = await this.service[`get${lm.modelName}`](value);
             res.status(200).json(item);
           } catch (err) {
             next(err);
           }
         };
-        this[`get${ModelName}s`] = async (req, res, next) => {
+        this[`get${lm.modelName}s`] = async (req, res, next) => {
           try {
-            const items = await this.service[`get${ModelName}s`]
-              .call(this.service, req.params[this.identifier]);
+            const value = {
+              [this.foreignKey]: req.params[this.identifierKey],
+            };
+            const items = await this.service[`get${lm.modelName}s`](value);
             res.status(200).json(items);
           } catch (err) {
             next(err);
           }
         };
-        this[`update${ModelName}`] = async (req, res, next) => {
+        this[`update${lm.modelName}`] = async (req, res, next) => {
           try {
-            const updatedItem = await this.service[`update${ModelName}`]
-              (req.params[this.identifier], req.params[subIdentifier], req.body);
+            const value = {
+              ...req.body,
+              [this.foreignKey]: req.params[this.identifierKey],
+            };
+            const updatedItem = await this.service[`update${lm.modelName}`](req.params[lm.otherKey], value);
             res.status(200).json(updatedItem);
           } catch (err) {
             next(err);
           }
         };
-        this[`remove${ModelName}`] = async (req, res, next) => {
+        this[`remove${lm.modelName}`] = async (req, res, next) => {
           try {
-            const result = await this.service[`remove${ModelName}`]
-              (req.params[this.identifier], req.params[subIdentifier]);
+            const value = {
+              [this.foreignKey]: req.params[this.identifierKey],
+              [identifierKey]: req.params[lm.otherKey]
+            };
+            const result = await this.service[`remove${lm.modelName}`](value);
             res.status(200).json(result);
           } catch (err) {
             next(err);
@@ -74,19 +89,19 @@ module.exports = class CrudController {
     }
   }
 
-  readMany = async (req, res, next) => {
+  getMany = async (req, res, next) => {
     try {
       const { order, page, size } = req.query;
-      const items = await this.service.readMany({ order, page, size });
+      const items = await this.service.getMany({ order, page, size });
       res.status(200).json(items);      
     } catch (err) {
       next(err);
     }  
   }
 
-  readOne = async (req, res, next) => {
+  getOne = async (req, res, next) => {
     try {
-      const item = await this.service.readOne(req.params[this.identifier]);
+      const item = await this.service.getOne(req.params[this.identifierKey]);
       res.status(200).json(item);      
     } catch (err) {
       next(err);
@@ -95,16 +110,16 @@ module.exports = class CrudController {
 
   update = async (req, res, next) => {
     try {
-      const updatedItem = await this.service.update(req.params[this.identifier], req.body);
+      const updatedItem = await this.service.update(req.params[this.identifierKey], req.body);
       res.status(200).json(updatedItem);
     } catch (err) {
       next(err);
     }
   }
 
-  destroy = async (req, res, next) => {
+  remove = async (req, res, next) => {
     try {
-      const result = await this.service.destroy(req.params[this.identifier]);
+      const result = await this.service.remove(req.params[this.identifierKey]);
       res.status(200).json(result);
     } catch (err) {
       next(err);

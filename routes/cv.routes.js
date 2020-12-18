@@ -1,51 +1,36 @@
 const express = require('express');
 const path = require('path');
 const router = express.Router();
-const { User, UserDetail, Cv, CvDetail, Experience, ExperienceDetail } = require('../model');
+const { CvSettings } = require('../config');
 const { Regex } = require('../enum');
 
 const CrudController = require('../controllers/crud.controller');
-const cvController = new CrudController(Cv, [
-  { 
-    model: User,
-    eager: true,
-    include: [
-      {
-        model: UserDetail,
-        as: 'details',
-      }
-    ]
-  },
-  { model: CvDetail, eager: true, as: 'details' },
-  { model: Experience, eager: true, include: [
-    { model: ExperienceDetail, as: 'details' }
-  ] },
-]);
+const cvController = new CrudController(CvSettings);
 
 const check = require('../middleware/validation/check');
 const { QueryCommon } = require('../middleware/validation/schemas');
 const { verifyAdmin } = require('../middleware/auth');
 
-router.get(`/`, check(QueryCommon), cvController.readMany);
+router.get(`/`, check(QueryCommon), cvController.getMany);
 router.post(`/`, cvController.create);
 
 // router.get(`/1`, (req, res) => {
 //   res.sendFile(path.resolve(__dirname, '../public/cv', 'document.json'));
 // });
-router.get(`/:cvId(${Regex.positiveInt})`, cvController.readOne);
-router.patch(`/:cvId(${Regex.positiveInt})`, cvController.update);
-router.delete(`/:cvId(${Regex.positiveInt})`, cvController.destroy);
+router.get(`/:id(${Regex.positiveInt})`, cvController.getOne);
+router.patch(`/:id(${Regex.positiveInt})`, cvController.update);
+router.delete(`/:id(${Regex.positiveInt})`, cvController.remove);
 
-router.get(`/:cvId(${Regex.positiveInt})/details`, cvController.getCvDetails);
-router.post(`/:cvId(${Regex.positiveInt})/details`, cvController.createCvDetail);
-router.get(`/:cvId(${Regex.positiveInt})/details/:cvDetailId`, cvController.getCvDetail);
-router.patch(`/:cvId(${Regex.positiveInt})/details/:cvDetailId`, cvController.updateCvDetail);
-router.delete(`/:cvId(${Regex.positiveInt})/details/:cvDetailId`, cvController.removeCvDetail);
+router.get(`/:id(${Regex.positiveInt})/details`, cvController.getCvDetails);
+router.post(`/:id(${Regex.positiveInt})/details`, cvController.createCvDetail);
+router.get(`/:id(${Regex.positiveInt})/details/:detailId`, cvController.getCvDetail);
+router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, cvController.updateCvDetail);
+router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, cvController.removeCvDetail);
 
-router.get(`/:cvId(${Regex.positiveInt})/experiences`, cvController.getExperiences);
-router.post(`/:cvId(${Regex.positiveInt})/experiences`, cvController.createExperience);
-router.get(`/:cvId(${Regex.positiveInt})/experiences/:experienceId`, cvController.getExperience);
-router.patch(`/:cvId(${Regex.positiveInt})/experiences/:experienceId`, cvController.updateExperience);
-router.delete(`/:cvId(${Regex.positiveInt})/experiences/:experienceId`, cvController.removeExperience);
+router.get(`/:id(${Regex.positiveInt})/experiences`, cvController.getExperiences);
+router.post(`/:id(${Regex.positiveInt})/experiences`, cvController.createExperience);
+router.get(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.getExperience);
+router.patch(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.updateExperience);
+router.delete(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.removeExperience);
 
 module.exports = router;
