@@ -22,13 +22,13 @@ router.patch(`/:id(${Regex.positiveInt})`, cvController.update);
 router.delete(`/:id(${Regex.positiveInt})`, cvController.remove);
 
 router.get(`/:id(${Regex.positiveInt})/details`, cvController.getCvDetails);
-router.post(`/:id(${Regex.positiveInt})/details`, cvController.createCvDetail);
+router.post(`/:id(${Regex.positiveInt})/details`, cvController.createCvDetails);
 router.get(`/:id(${Regex.positiveInt})/details/:detailId`, cvController.getCvDetail);
 router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, cvController.updateCvDetail);
 router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, cvController.removeCvDetail);
 
 router.get(`/:id(${Regex.positiveInt})/experiences`, cvController.getExperiences);
-router.post(`/:id(${Regex.positiveInt})/experiences`, cvController.createExperience);
+router.post(`/:id(${Regex.positiveInt})/experiences`, cvController.createExperiences);
 router.get(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.getExperience);
 router.patch(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.updateExperience);
 router.delete(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.removeExperience);

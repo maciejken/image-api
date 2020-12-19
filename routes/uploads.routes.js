@@ -5,8 +5,6 @@ const uploadController = require('../controllers/upload.controller');
 const check = require('../middleware/validation/check');
 const { UploadQuery } = require('../middleware/validation/schemas');
 const {
-  verifyImageGroup,
-  verifyImageUser,
   verifyQueryGroup,
   verifyUser
 } = require('../middleware/auth');
@@ -26,7 +24,7 @@ router.post(`/`,
 );
 router.get(`/:filename`, verifyUser, uploadController.getMediumSizeImage);
 router.get(`/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
-router.get(`/:filename/full-size`, verifyImageGroup, uploadController.getFullSizeImage);
-router.delete(`/:filename`, verifyImageUser, uploadController.removeImage);
+router.get(`/:filename/full-size`, uploadController.getFullSizeImage);
+router.delete(`/:filename`, uploadController.removeImage);
 
 module.exports = router;

@@ -8,7 +8,7 @@ module.exports = function ImageDetailModel(db, Sequelize) {
       primaryKey: true,
       allowNull: false
     },
-    imageId: {
+    filename: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
@@ -16,12 +16,12 @@ module.exports = function ImageDetailModel(db, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    content: {
-      type: Sequelize.TEXT,
-      allowNull: true,
-    },
     type: {
       type: Sequelize.STRING,
+      allowNull: true,
+    },
+    content: {
+      type: Sequelize.TEXT,
       allowNull: true,
     },
     order: {

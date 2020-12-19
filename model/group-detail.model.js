@@ -20,10 +20,6 @@ module.exports = function GroupDetailModel(db, Sequelize) {
       type: Sequelize.TEXT,
       allowNull: true,
     },
-    link: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
     order: {
       type: Sequelize.INTEGER,
       allowNull: true,

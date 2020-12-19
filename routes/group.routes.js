@@ -18,7 +18,7 @@ router.patch(`/:id(${Regex.positiveInt})`, check(GroupData), verifyAdmin, groupC
 router.delete(`/:id(${Regex.positiveInt})`, verifyAdmin, groupController.remove);
 
 router.get(`/:id(${Regex.positiveInt})/details`, verifyAdmin, groupController.getGroupDetails);
-router.post(`/:id(${Regex.positiveInt})/details`, verifyAdmin, groupController.createGroupDetail);
+router.post(`/:id(${Regex.positiveInt})/details`, verifyAdmin, groupController.createGroupDetails);
 router.get(`/:id(${Regex.positiveInt})/details/:detailId`, verifyAdmin, groupController.getGroupDetail);
 router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, verifyAdmin, groupController.updateGroupDetail);
 router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, verifyAdmin, groupController.removeGroupDetail);

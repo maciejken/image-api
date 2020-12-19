@@ -1,5 +1,4 @@
 const authService = require('../services/auth.service');
-const imageService = require('../services/image.service');
 const CustomError = require('./errors/custom-error');
 const requestUtil = require('../utils/request.util');
 
@@ -42,36 +41,36 @@ module.exports = {
       next(err);
     }
   },
-  async verifyImageUser(req, res, next) {
-    try {
-      processToken(req, res);
-      const { userId } = res.locals;
-      const image = await imageService.getImage(req.params.filename);
-      if (image.userId === userId) {
-        res.locals.image = image;
-        next();
-      } else {
-        throw notPermittedError;
-      }
-    } catch (err) {
-      next(err);
-    }
-  },
-  async verifyImageGroup(req, res, next) {
-    try {
-      processToken(req, res);
-      const { groups } = res.locals;
-      const image = await imageService.getImage(req.params.filename);
-      if (canAuthorize(groups, image.groupId)) {
-        res.locals.image = image;
-        next();
-      } else {
-        throw notPermittedError;
-      }
-    } catch (err) {
-      next(err);
-    }
-  },
+  // async verifyImageUser(req, res, next) {
+  //   try {
+  //     processToken(req, res);
+  //     const { userId } = res.locals;
+  //     const image = await imageService.getImage(req.params.filename);
+  //     if (image.userId === userId) {
+  //       res.locals.image = image;
+  //       next();
+  //     } else {
+  //       throw notPermittedError;
+  //     }
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // },
+  // async verifyImageGroup(req, res, next) {
+  //   try {
+  //     processToken(req, res);
+  //     const { groups } = res.locals;
+  //     const image = await imageService.getImage(req.params.filename);
+  //     if (canAuthorize(groups, image.groupId)) {
+  //       res.locals.image = image;
+  //       next();
+  //     } else {
+  //       throw notPermittedError;
+  //     }
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // },
   verifyAdmin(req, res, next) {
     try {
       processToken(req, res);

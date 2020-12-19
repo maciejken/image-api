@@ -19,7 +19,7 @@ router.patch(`/:id(${Regex.positiveInt})`, expController.update);
 router.delete(`/:id(${Regex.positiveInt})`, expController.remove);
 
 router.get(`/:id(${Regex.positiveInt})/details`, expController.getExperienceDetails);
-router.post(`/:id(${Regex.positiveInt})/details`, expController.createExperienceDetail);
+router.post(`/:id(${Regex.positiveInt})/details`, expController.createExperienceDetails);
 router.get(`/:id(${Regex.positiveInt})/details/:detailId`, expController.getExperienceDetail);
 router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, expController.updateExperienceDetail);
 router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, expController.removeExperienceDetail);

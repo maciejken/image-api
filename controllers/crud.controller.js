@@ -17,14 +17,23 @@ module.exports = class CrudController {
     if (linkedModels) {
       for (const lm of linkedModels) {
         const identifierKey = lm.identifierKey || 'id';
-        this[`create${lm.modelName}`] = async (req, res, next) => {
+        this[`create${lm.modelName}s`] = async (req, res, next) => {
           try {
-            const value = {
-              ...req.body,
-              [this.foreignKey]: req.params[this.identifierKey],
-            };
-            const [item, isNew] = await this.service[`create${lm.modelName}`](value);
-            res.status(isNew ? 201 : 200).json(item);
+            if (Array.isArray(req.body)) {
+              const values = req.body.map(d => ({
+                ...d,
+                [this.foreignKey]: req.params[this.identifierKey],
+              }));
+              const data = await this.service[`create${lm.modelName}s`](values);
+              res.status(201).json(data);
+            } else {
+              const value = {
+                ...req.body,
+                [this.foreignKey]: req.params[this.identifierKey],
+              };
+              const [item, isNew] = await this.service[`create${lm.modelName}`](value);
+              res.status(isNew ? 201 : 200).json(item);
+            }
           } catch (err) {
             next(err);
           }

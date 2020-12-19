@@ -100,6 +100,7 @@ module.exports = {
         as: 'details',
         eager: true,
         otherKey: 'detailId',
+        updateOnDuplicate: ['name'],
       },
       {
         model: Cv,

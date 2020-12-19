@@ -18,7 +18,7 @@ router.patch(`/:id(${Regex.positiveInt})`, check(UserData), userController.updat
 router.delete(`/:id(${Regex.positiveInt})`, userController.remove);
 
 router.get(`/:id(${Regex.positiveInt})/groups`, userController.getGroups);
-router.post(`/:id(${Regex.positiveInt})/groups`, verifyAdmin, userController.createGroup);
+router.post(`/:id(${Regex.positiveInt})/groups`, verifyAdmin, userController.createGroups);
 router.get(`/:id(${Regex.positiveInt})/groups/:groupId`, userController.getGroup);
 router.patch(`/:id(${Regex.positiveInt})/groups/:groupId`, verifyAdmin, userController.updateGroup);
 router.delete(
@@ -27,13 +27,13 @@ router.delete(
 );
 
 router.get(`/:id(${Regex.positiveInt})/details`, userController.getUserDetails);
-router.post(`/:id(${Regex.positiveInt})/details`, userController.createUserDetail);
+router.post(`/:id(${Regex.positiveInt})/details`, userController.createUserDetails);
 router.get(`/:id(${Regex.positiveInt})/details/:detailId`, userController.getUserDetail);
 router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, userController.updateUserDetail);
 router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, userController.removeUserDetail);
 
 router.get(`/:id(${Regex.positiveInt})/cv`, check(QueryCommon), userController.getCvs);
-router.post(`/:id(${Regex.positiveInt})/cv`, userController.createCv);
+router.post(`/:id(${Regex.positiveInt})/cv`, userController.createCvs);
 router.get(`/:id(${Regex.positiveInt})/cv/:cvId`, userController.getCv);
 router.patch(`/:id(${Regex.positiveInt})/cv/:cvId`, userController.updateCv);
 router.delete(`/:id(${Regex.positiveInt})/cv/:cvId`, userController.removeCv);

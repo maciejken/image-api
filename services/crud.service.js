@@ -17,14 +17,14 @@ module.exports = class CrudService {
 
     if (linkedModels) {
       for (const lm of linkedModels) {
-        const { through } = lm;
+        const { through, updateOnDuplicate } = lm;
         const identifierKey = lm.identifierKey || 'id';
         this[`create${lm.modelName}`] = async (value) => {
           let val;
           if (through) {
             const resp = await lm.model.findOrCreate({ where: value });
             const throughVal = {
-                [this.foreignKey]: value[this.foreignKey],
+                [this.foreignKey]: resp[0][this.foreignKey],
                 [lm.otherKey]: resp[0][identifierKey],
             };
             await through.findOrCreate({ where: throughVal });
@@ -33,6 +33,22 @@ module.exports = class CrudService {
             val = await lm.model.findOrCreate({ where: value });
           }
           return val;
+        };
+        this[`create${lm.modelName}s`] = async (values) => {
+          let data = [];
+          if (through) {
+            data = await lm.model.bulkCreate(values, { updateOnDuplicate });
+            const throughData = data.map(d => ({
+              [this.foreignKey]: d[this.foreignKey],
+              [lm.otherKey]: d[identifierKey],
+            }));
+            await through.bulkCreate(throughData, {
+              updateOnDuplicate: [this.foreignKey, identifierKey],
+            });
+          } else {
+            data = await lm.model.bulkCreate(values, { updateOnDuplicate });
+          }
+          return data;
         };
         this[`get${lm.modelName}`] = async (value) => {
           let val = null;
