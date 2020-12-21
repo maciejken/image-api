@@ -9,7 +9,7 @@ const cvController = new CrudController(CvSettings);
 
 const check = require('../middleware/validation/check');
 const { QueryCommon } = require('../middleware/validation/schemas');
-const { verifyAdmin } = require('../middleware/auth');
+const { verifyGroup } = require('../middleware/auth');
 
 router.get(`/`, check(QueryCommon), cvController.getMany);
 router.post(`/`, cvController.create);

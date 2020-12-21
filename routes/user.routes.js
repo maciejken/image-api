@@ -6,36 +6,36 @@ const { Regex } = require('../enum');
 const CrudController = require('../controllers/crud.controller');
 const userController = new CrudController(UserSettings);
 
-const { verifyAdmin } = require('../middleware/auth');
+const { verifyAdmin, verifyAddress, verifyGroup, verifyUser } = require('../middleware/auth');
 const check = require('../middleware/validation/check');
 const { QueryCommon, NewUserData, UserData } = require('../middleware/validation/schemas');
 
-// TODO: add verifyUser (auth) middleware here
 router.get(`/`, check(QueryCommon), verifyAdmin, userController.getMany)
-router.post(`/`, check(NewUserData), userController.create);
-router.get(`/:id(${Regex.positiveInt})`, userController.getOne);
-router.patch(`/:id(${Regex.positiveInt})`, check(UserData), userController.update);
-router.delete(`/:id(${Regex.positiveInt})`, userController.remove);
+router.post(`/`, check(NewUserData), verifyAddress, userController.create);
+router.get(`/:id(${Regex.positiveInt})`, verifyUser, userController.getOne);
+router.patch(`/:id(${Regex.positiveInt})`, check(UserData), verifyUser, userController.update);
+router.delete(`/:id(${Regex.positiveInt})`, verifyUser, userController.remove);
 
-router.get(`/:id(${Regex.positiveInt})/groups`, userController.getGroups);
-router.post(`/:id(${Regex.positiveInt})/groups`, verifyAdmin, userController.createGroups);
-router.get(`/:id(${Regex.positiveInt})/groups/:groupId`, userController.getGroup);
-router.patch(`/:id(${Regex.positiveInt})/groups/:groupId`, verifyAdmin, userController.updateGroup);
+router.get(`/:id(${Regex.positiveInt})/groups`, verifyUser, userController.getGroups);
+router.post(`/:id(${Regex.positiveInt})/groups`, verifyUser, userController.createGroups);
+router.get(`/:id(${Regex.positiveInt})/groups/:groupId`, verifyUser, verifyGroup, userController.getGroup);
+router.patch(`/:id(${Regex.positiveInt})/groups/:groupId`, verifyUser, verifyGroup, userController.updateGroup);
 router.delete(
   `/:id(${Regex.positiveInt})/groups/:groupId(${Regex.positiveInt})`,
+  verifyUser, verifyGroup,
   userController.removeGroup,
 );
 
-router.get(`/:id(${Regex.positiveInt})/details`, userController.getUserDetails);
-router.post(`/:id(${Regex.positiveInt})/details`, userController.createUserDetails);
-router.get(`/:id(${Regex.positiveInt})/details/:detailId`, userController.getUserDetail);
-router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, userController.updateUserDetail);
-router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, userController.removeUserDetail);
+router.get(`/:id(${Regex.positiveInt})/details`, verifyUser, userController.getUserDetails);
+router.post(`/:id(${Regex.positiveInt})/details`, verifyUser, userController.createUserDetails);
+router.get(`/:id(${Regex.positiveInt})/details/:detailId`, verifyUser, userController.getUserDetail);
+router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, verifyUser, userController.updateUserDetail);
+router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, verifyUser, userController.removeUserDetail);
 
-router.get(`/:id(${Regex.positiveInt})/cv`, check(QueryCommon), userController.getCvs);
-router.post(`/:id(${Regex.positiveInt})/cv`, userController.createCvs);
-router.get(`/:id(${Regex.positiveInt})/cv/:cvId`, userController.getCv);
-router.patch(`/:id(${Regex.positiveInt})/cv/:cvId`, userController.updateCv);
-router.delete(`/:id(${Regex.positiveInt})/cv/:cvId`, userController.removeCv);
+router.get(`/:id(${Regex.positiveInt})/cv`, check(QueryCommon), verifyUser, userController.getCvs);
+router.post(`/:id(${Regex.positiveInt})/cv`, verifyUser, userController.createCvs);
+router.get(`/:id(${Regex.positiveInt})/cv/:cvId`, verifyUser, userController.getCv);
+router.patch(`/:id(${Regex.positiveInt})/cv/:cvId`, verifyUser, userController.updateCv);
+router.delete(`/:id(${Regex.positiveInt})/cv/:cvId`, verifyUser, userController.removeCv);
 
 module.exports = router;

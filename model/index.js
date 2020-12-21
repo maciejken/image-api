@@ -31,7 +31,7 @@ const CvDetail = CvDetailModel(db, Sequelize);
 const Experience = ExperienceModel(db, Sequelize);
 const ExperienceDetail = ExperienceDetailModel(db, Sequelize);
 
-Image.hasMany(ImageDetail);
+Image.hasMany(ImageDetail, { as: 'details', foreignKey: 'filename' });
 Cv.hasMany(CvDetail, { as: 'details' });
 Cv.hasMany(Experience);
 Experience.hasMany(ExperienceDetail, { as: 'details' });

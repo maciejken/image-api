@@ -4,10 +4,7 @@ const router = express.Router();
 const uploadController = require('../controllers/upload.controller');
 const check = require('../middleware/validation/check');
 const { UploadQuery } = require('../middleware/validation/schemas');
-const {
-  verifyQueryGroup,
-  verifyUser
-} = require('../middleware/auth');
+const { verify, verifyAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const thumbnail = require('../middleware/thumbnail');
 const readExif = require('../middleware/read-exif');
@@ -16,15 +13,15 @@ const uploadField = process.env.IMAGE_UPLOAD_FIELD_NAME;
 
 router.post(`/`,
   check(UploadQuery),
-  verifyQueryGroup,
+  verifyAdmin,
   upload.array(uploadField),
   thumbnail,
   readExif,
   uploadController.createImages
 );
-router.get(`/:filename`, verifyUser, uploadController.getMediumSizeImage);
-router.get(`/:filename/thumbnail`, verifyUser, uploadController.getThumbnail);
-router.get(`/:filename/full-size`, uploadController.getFullSizeImage);
-router.delete(`/:filename`, uploadController.removeImage);
+router.get(`/:filename`, verify, uploadController.getMediumSizeImage);
+router.get(`/:filename/thumbnail`, verify, uploadController.getThumbnail);
+router.get(`/:filename/full-size`, verify, uploadController.getFullSizeImage);
+router.delete(`/:filename`, verifyAdmin, uploadController.removeImage);
 
 module.exports = router;

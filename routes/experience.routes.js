@@ -9,7 +9,7 @@ const expController = new CrudController(ExperienceSettings);
 
 const check = require('../middleware/validation/check');
 const { QueryCommon } = require('../middleware/validation/schemas');
-const { verifyAdmin } = require('../middleware/auth');
+const { verifyGroup } = require('../middleware/auth');
 
 router.get(`/`, check(QueryCommon), expController.getMany);
 router.post(`/`, expController.create);

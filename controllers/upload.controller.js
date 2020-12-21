@@ -36,21 +36,26 @@ module.exports = {
     try {
       const { groupId } = req.query;
       const { userId } = res.locals;
-      const images = await Promise.all(req.files.map(f => {
+      const images = await Promise.all(req.files.map(async f => {
         const { filename, size } = f;
         const { location, datetime, camera, width, height } = f.exif;
-        // TODO: bulk create image details
-        return imageService.create({
+        const image = await imageService.create({
           filename,
           userId,
           groupId,
-          // location,
-          // datetime,
-          // camera,
-          width,
-          height,
-          // size,
         });
+        const details = [];
+        details.push({ name: 'file-size', content: `${size}` });
+        if (width && height) {
+          details.push({ name: 'exif-width', content: width });
+          details.push({ name: 'exif-height', content: height });
+          details.push({ name: 'exif-location', content: location });
+          details.push({ name: 'exif-datetime', content: datetime });
+          details.push({ name: 'exif-camera', content: camera });
+        }
+        details.map(d => ({ ...d, filename }));
+        await imageService.createImageDetails({ value: details });
+        return image;
       }));
       res.status(201).json(images);
     } catch (err) {

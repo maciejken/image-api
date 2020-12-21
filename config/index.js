@@ -9,6 +9,7 @@ const {
 module.exports = {
   pathToUploads: process.env.PATH_TO_UPLOADS,
   pathToThumbnails: process.env.PATH_TO_THUMBNAILS,
+  adminGroupId: parseInt(process.env.ADMIN_GROUP_ID),
   CvSettings: {
     model: Cv,
     foreignKey: 'cvId',
@@ -70,8 +71,8 @@ module.exports = {
     ]
   },
   ImageSettings: {
-    identifierKey: 'filename',
     model: Image,
+    identifierKey: 'filename',
     foreignKey: 'filename',
     linkedModels: [
       {
@@ -80,6 +81,7 @@ module.exports = {
         as: 'details',
         eager: true,
         otherKey: 'detailId',
+        updateOnDuplicate: ['name']
       },
     ]
   },

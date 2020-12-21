@@ -9,7 +9,7 @@ module.exports = function ImageDetailModel(db, Sequelize) {
       allowNull: false
     },
     filename: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
       allowNull: false,
     },
     name: {

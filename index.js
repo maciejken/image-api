@@ -1,6 +1,6 @@
 const express = require('express');
 const fs = require('fs');
-const https = require('https');
+const spdy = require('spdy');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -59,12 +59,13 @@ const port = process.env.PORT;
 const certDir = process.env.CERT_DIR;
 logger.debug(`certificate/key loaded from "${certDir}"`);
 
-const credentials = {
+const opts = {
   key: fs.readFileSync(`${certDir}/privkey.pem`),
   cert: fs.readFileSync(`${certDir}/fullchain.pem`)
 };
 
-const server = https.createServer(credentials, app);
-server.listen(port, () => {
-  logger.info(`server listening on port ${port}`);
+spdy
+  .createServer(opts, app)
+  .listen(port, () => {
+    logger.info(`server listening on port ${port}`);
 });

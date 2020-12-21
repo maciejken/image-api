@@ -23,14 +23,14 @@ module.exports = function ImageModel(db, Sequelize) {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    width: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
-    height: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
+    // width: {
+    //   type: Sequelize.INTEGER,
+    //   allowNull: true,
+    // },
+    // height: {
+    //   type: Sequelize.INTEGER,
+    //   allowNull: true,
+    // },
     // size: {
     //   type: Sequelize.INTEGER,
     //   allowNull: true,
