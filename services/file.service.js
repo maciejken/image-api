@@ -11,7 +11,7 @@ function zeroPad(n) {
 }
 
 function parseExif(data) {
-  let exif;
+  const exifDetails = [];
   if (data) {
     const { gps, image } = data;
     const latRef = gps && gps.GPSLatitudeRef;
@@ -26,17 +26,17 @@ function parseExif(data) {
     const width = (image && image.ImageWidth) || null;
     const height = (image && image.ImageHeight) || null;
     const camera = (image && `${image.Make} ${image.Model}`) || null;
-    exif = !(width || height) ? null : {
-      location,
-      datetime,
-      camera,
-      width,
-      height,
-    };
-  } else {
-    exif = null;
+    if (width && height) {
+      exifDetails.push(
+        { name: 'exif-width', content: width },
+        { name: 'exif-height', content: height },
+        { name: 'exif-location', content: location },
+        { name: 'exif-datetime', content: datetime },
+        { name: 'exif-camera', content: camera },
+      );
+    }
   }
-  return exif;
+  return exifDetails;
 }
 
 module.exports = {
@@ -93,12 +93,12 @@ module.exports = {
         if (err) {
           resolve({
             ...file,
-            exif: {},
+            exifDetails: [],
           });
         } else {
           resolve({
             ...file,
-            exif: parseExif(data)
+            exifDetails: parseExif(data)
           });
         }
       });

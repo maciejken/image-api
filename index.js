@@ -57,7 +57,7 @@ app.use(errorHandler);
 
 const port = process.env.PORT;
 const certDir = process.env.CERT_DIR;
-logger.debug(`certificate/key loaded from "${certDir}"`);
+logger.debug(`cert/key loaded from "${certDir}"`);
 
 const opts = {
   key: fs.readFileSync(`${certDir}/privkey.pem`),

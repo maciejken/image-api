@@ -37,24 +37,19 @@ module.exports = {
       const { groupId } = req.query;
       const { userId } = res.locals;
       const images = await Promise.all(req.files.map(async f => {
-        const { filename, size } = f;
-        const { location, datetime, camera, width, height } = f.exif;
+        const { filename, size, exifDetails } = f;
         const image = await imageService.create({
           filename,
           userId,
           groupId,
         });
         const details = [];
-        details.push({ name: 'file-size', content: `${size}` });
-        if (width && height) {
-          details.push({ name: 'exif-width', content: width });
-          details.push({ name: 'exif-height', content: height });
-          details.push({ name: 'exif-location', content: location });
-          details.push({ name: 'exif-datetime', content: datetime });
-          details.push({ name: 'exif-camera', content: camera });
-        }
-        details.map(d => ({ ...d, filename }));
-        await imageService.createImageDetails({ value: details });
+        details.push({ name: 'file-size', content: size });
+        details.push(...exifDetails);
+        await imageService.createImageDetails({
+          value: details,
+          foreignKey: { name: 'filename', value: filename },
+        });
         return image;
       }));
       res.status(201).json(images);

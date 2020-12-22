@@ -19,11 +19,9 @@ module.exports = function GroupDetailModel(db, Sequelize) {
     content: {
       type: Sequelize.TEXT,
       allowNull: true,
-    },
-    order: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
+    }
+  }, {
+    timestamps: false,
   });
 
   return GroupDetail;

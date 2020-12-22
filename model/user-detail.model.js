@@ -16,18 +16,12 @@ module.exports = function UserDetailModel(db, Sequelize) {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    type: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
     content: {
       type: Sequelize.TEXT,
       allowNull: true,
     },
-    order: {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-    },
+  }, {
+    timestamps: false,
   });
 
   return UserDetail;

@@ -39,6 +39,7 @@ module.exports = class CrudService {
         };
         this[`create${lm.modelName}s`] = async (params) => {
           const { value, foreignKey, targetKey, otherKey } = params;
+          let data;
           if (through) {
             data = await lm.model.bulkCreate(value, { updateOnDuplicate });
             const throughData = data.map(d => ({
@@ -47,7 +48,11 @@ module.exports = class CrudService {
             }));
             await through.bulkCreate(throughData, { ignoreDuplicates: true });
           } else {
-            data = await lm.model.bulkCreate(value, { updateOnDuplicate });
+            const values = value.map(v => ({
+              ...v,
+              [foreignKey.name]: foreignKey.value,
+            }));
+            data = await lm.model.bulkCreate(values, { updateOnDuplicate });
           }
           return data;
         };
