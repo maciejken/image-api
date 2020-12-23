@@ -4,7 +4,7 @@ const path = require('path');
 const { ExifImage } = require('exif');
 
 const CustomError = require('../middleware/errors/custom-error');
-const { pathToUploads, pathToThumbnails } = require('../config');
+const { pathToPrivateUploads, pathToThumbnails } = require('../config');
 
 function zeroPad(n) {
   return String(n).padStart(2, '0');
@@ -76,20 +76,20 @@ module.exports = {
   },
   createThumbnail(files) {
     return Promise.all(files.map(f => {
-        return sharp(path.join(pathToUploads, f.filename))
+        return sharp(path.join(pathToPrivateUploads, f.filename))
           .resize(200, 200)
           .toFile(path.join(pathToThumbnails, f.filename));
     }));
   },
   getImage(filename, { width, height }) {
-    return sharp(path.join(pathToUploads, filename))
+    return sharp(path.join(pathToPrivateUploads, filename))
       .resize(width, height)
       .toBuffer();
   },
   readExif(files) {
     return Promise.all(files.map(file => new Promise((resolve, reject) => {
       const { filename } = file;
-      new ExifImage({ image: path.join(pathToUploads, filename) }, (err, data) => {
+      new ExifImage({ image: path.join(pathToPrivateUploads, filename) }, (err, data) => {
         if (err) {
           resolve({
             ...file,

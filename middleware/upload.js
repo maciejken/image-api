@@ -1,8 +1,12 @@
 const multer = require('multer');
-const { pathToUploads } = require('../config');
+const { pathToPrivateUploads, pathToPublicUploads } = require('../config');
 
 const storage = multer.diskStorage({
-  destination: pathToUploads,
+  destination: (req, file, cb) => {
+    const path = req.originalUrl.includes('public')
+      ? pathToPublicUploads : pathToPrivateUploads;
+    cb(null, path);
+  },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
   }

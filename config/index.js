@@ -1,3 +1,4 @@
+const path = require('path');
 const {
   Cv, CvDetail,
   Experience, ExperienceDetail,
@@ -7,7 +8,9 @@ const {
 } = require('../model');
 
 module.exports = {
-  pathToUploads: process.env.PATH_TO_UPLOADS,
+  uploadField: process.env.IMAGE_UPLOAD_FIELD_NAME,
+  pathToPublicUploads: path.resolve(__dirname, '../public/uploads'),
+  pathToPrivateUploads: process.env.PATH_TO_UPLOADS,
   pathToThumbnails: process.env.PATH_TO_THUMBNAILS,
   adminGroupId: parseInt(process.env.ADMIN_GROUP_ID),
   CvSettings: {

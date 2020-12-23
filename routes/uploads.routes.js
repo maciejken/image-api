@@ -8,9 +8,9 @@ const { verify, verifyAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const thumbnail = require('../middleware/thumbnail');
 const readExif = require('../middleware/read-exif');
+const { uploadField } = require('../config');
 
-const uploadField = process.env.IMAGE_UPLOAD_FIELD_NAME;
-
+router.post(`/public`, verifyAdmin, upload.array(uploadField), uploadController.getUploadInfo);
 router.post(`/`,
   check(UploadQuery),
   verifyAdmin,
