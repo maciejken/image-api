@@ -40,7 +40,7 @@ app.use(`${apiPrefix}/uploads`, require('./routes/uploads.routes'));
 app.use(`${apiPrefix}/cv`, require('./routes/cv.routes'));
 app.use(`${apiPrefix}/experiences`, require('./routes/experience.routes'));
 
-app.use(express.static('public'));
+app.use(express.static(path.resolve('./public')));
 app.get('/cv/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'public/cv', 'index.html'));
 });
