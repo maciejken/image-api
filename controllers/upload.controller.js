@@ -44,6 +44,7 @@ module.exports = {
     try {
       const { groupId } = req.query;
       const { userId } = res.locals;
+      console.log('userId:', userId);
       const images = await Promise.all(req.files.map(async f => {
         const { filename, size, exifDetails } = f;
         const image = await imageService.create({

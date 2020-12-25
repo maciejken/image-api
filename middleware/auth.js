@@ -12,11 +12,11 @@ function processToken(req, res) {
     const verifiedToken = authService.verifyToken(token);
     const { groups, sub } = verifiedToken;
     res.locals.userId = parseInt(sub);
-    res.locals.groups = groups;    
+    res.locals.groups = groups;
   }
 }
 
-const verify = (req, res, next, options) => {
+function verify(req, res, options) {
   let canAuthorize;
   if (!options) {
     processToken(req, res);
@@ -34,7 +34,7 @@ const verify = (req, res, next, options) => {
   }
 
   if (canAuthorize) {
-    next();
+    return true;
   } else {
     throw notPermittedError;
   }
@@ -42,7 +42,8 @@ const verify = (req, res, next, options) => {
 
 function verifyAdmin(req, res, next) {
   try {
-    verify(req, res, next, { groupId: adminGroupId });
+    verify(req, res, { groupId: adminGroupId });
+    next();
   } catch (err) {
     next(err);
   }
@@ -50,7 +51,8 @@ function verifyAdmin(req, res, next) {
 
 function verifyAddress(req, res, next) {
   try {
-    verify(req, res, next, { address: req.ip });
+    verify(req, res, { address: req.ip });
+    next();
   } catch (err) {
     next(err);
   }
@@ -58,26 +60,37 @@ function verifyAddress(req, res, next) {
 
 function verifyGroup(req, res, next) {
   try {
-    verify(req, res, next, {
+    verify(req, res, {
       groupId: parseInt(req.params.groupId || req.params.id || adminGroupId),
     });
+    next();
   } catch (err) {
     next(err);
   }
 }
 
-const verifyUser = (req, res, next) => {
+function verifyUser(req, res, next) {
   try {
-    verify(req, res, next, {
+    verify(req, res, {
       userId: parseInt(req.params.userId || req.params.id),
     });
+    next();
   } catch (err) {
     next(err);
   }
 };
 
+function verifyToken(req, res, next) {
+  try {
+    verify(req, res);
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
-  verify,
+  verifyToken,
   verifyAdmin,
   verifyAddress,
   verifyGroup,
