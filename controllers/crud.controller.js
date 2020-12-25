@@ -1,8 +1,8 @@
 const CrudService = require('../services/crud.service');
 
 module.exports = class CrudController {
-  service = null;
-  linkedModels = [];
+  service;
+  linkedModels;
   identifierKey;
   foreignKey;
 
