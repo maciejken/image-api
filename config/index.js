@@ -71,6 +71,15 @@ module.exports = {
         eager: true,
         otherKey: 'detailId',
       },
+      {
+        model: Image,
+        modelName: 'Image',
+        otherKey: 'filename',
+        targetKey: 'filename',
+        include: [
+          { model: ImageDetail, as: 'details' }
+        ]
+      }
     ]
   },
   ImageSettings: {

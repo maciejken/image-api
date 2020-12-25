@@ -23,4 +23,10 @@ router.get(`/:id(${Regex.positiveInt})/details/:detailId`, verifyGroup, groupCon
 router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, verifyGroup, groupController.updateGroupDetail);
 router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, verifyGroup, groupController.removeGroupDetail);
 
+router.get(`/:id(${Regex.positiveInt})/images`, verifyGroup, groupController.getImages);
+router.post(`/:id(${Regex.positiveInt})/images`, verifyGroup, groupController.createImages);
+router.get(`/:id(${Regex.positiveInt})/images/:filename`, verifyGroup, groupController.getImage);
+router.patch(`/:id(${Regex.positiveInt})/images/:filename`, verifyGroup, groupController.updateImage);
+router.delete(`/:id(${Regex.positiveInt})/images/:filename`, verifyGroup, groupController.removeImage);
+
 module.exports = router;
