@@ -11,12 +11,12 @@ const uploadController = require('../controllers/upload.controller');
 const CrudController = require('../controllers/crud.controller');
 const groupController = new CrudController(GroupSettings);
 
-const { verifyAdmin, verifyGroup, verifyUser } = require('../middleware/auth');
+const { verifyAdmin, verifyGroup, verifyToken, verifyUser } = require('../middleware/auth');
 const check = require('../middleware/validation/check');
 const { QueryCommon, NewGroupData, GroupData } = require('../middleware/validation/schemas');
 
 router.get(`/`, check(QueryCommon), verifyAdmin, groupController.getMany)
-router.post(`/`, check(NewGroupData), verifyUser, groupController.create);
+router.post(`/`, check(NewGroupData), verifyToken, groupController.create);
   
 router.get(`/:id(${Regex.positiveInt})`, verifyGroup, groupController.getOne);
 router.patch(`/:id(${Regex.positiveInt})`, check(GroupData), verifyGroup, groupController.update);

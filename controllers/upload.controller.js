@@ -42,9 +42,7 @@ module.exports = {
   },
   async createImages(req, res, next) {
     try {
-      const { groupId } = req.query;
-      const { userId } = res.locals;
-      console.log('userId:', userId);
+      const { userId, groupId } = res.locals;
       const images = await Promise.all(req.files.map(async f => {
         const { filename, size, exifDetails } = f;
         const image = await imageService.create({
@@ -71,12 +69,14 @@ module.exports = {
       const { filename } = req.params;
       const image = await imageService.getOne(filename);
       const { userId } = res.locals;
-      if (userId === image.userId) {
+      if (!image) {
+        throw new CustomError(`File ${filename} not found`, 404);
+      } else if (image.userId === userId) {
         const removeMainFile = fileService.removeFile(path.join(pathToPrivateUploads, filename));
         const removeThumbnail = fileService.removeFile(path.join(pathToThumbnails, filename));
         const removeFromDb = imageService.remove(filename);
         await Promise.all([removeMainFile, removeThumbnail, removeFromDb]);
-        res.status(200).json({ message: `${filename} upload removed` });        
+        res.status(200).json({ message: `File ${filename} removed` });
       } else {
         throw new CustomError(`User ${userId} is not permitted to remove file ${filename}`, 403);
       }

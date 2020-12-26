@@ -27,7 +27,7 @@ function verify(req, res, options) {
     processToken(req, res);
     const { groups, userId } = res.locals;
     if (options.userId) {
-      canAuthorize = userId === options.userId || groups && groups.includes(adminGroupId);
+      canAuthorize = options.userId === userId;
     } else if (options.groupId) {
       canAuthorize = groups && (groups.includes(options.groupId) || groups.includes(adminGroupId));
       res.locals.groupId = (canAuthorize && options.groupId) || null;

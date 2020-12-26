@@ -136,6 +136,12 @@ module.exports = {
         ],
         otherKey: 'cvId',
       },
+      {
+        model: Image,
+        modelName: 'Image',
+        otherKey: 'filename',
+        targetKey: 'filename'
+      },
     ]
   },
 };
