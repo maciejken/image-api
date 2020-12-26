@@ -30,6 +30,7 @@ function verify(req, res, options) {
       canAuthorize = userId === options.userId || groups && groups.includes(adminGroupId);
     } else if (options.groupId) {
       canAuthorize = groups && (groups.includes(options.groupId) || groups.includes(adminGroupId));
+      res.locals.groupId = (canAuthorize && options.groupId) || null;
     }
   }
 

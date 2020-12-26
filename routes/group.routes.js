@@ -3,6 +3,11 @@ const router = express.Router();
 
 const { GroupSettings } = require('../config');
 const { Regex } = require('../enum');
+const upload = require('../middleware/upload');
+const thumbnail = require('../middleware/thumbnail');
+const readExif = require('../middleware/read-exif');
+const { uploadField } = require('../config');
+const uploadController = require('../controllers/upload.controller');
 const CrudController = require('../controllers/crud.controller');
 const groupController = new CrudController(GroupSettings);
 
@@ -23,10 +28,14 @@ router.get(`/:id(${Regex.positiveInt})/details/:detailId`, verifyGroup, groupCon
 router.patch(`/:id(${Regex.positiveInt})/details/:detailId`, verifyGroup, groupController.updateGroupDetail);
 router.delete(`/:id(${Regex.positiveInt})/details/:detailId`, verifyGroup, groupController.removeGroupDetail);
 
+router.post(`/:id(${Regex.positiveInt})/uploads`,
+  verifyGroup,
+  upload.array(uploadField),
+  thumbnail,
+  readExif,
+  uploadController.createImages
+);
 router.get(`/:id(${Regex.positiveInt})/images`, verifyGroup, groupController.getImages);
-router.post(`/:id(${Regex.positiveInt})/images`, verifyGroup, groupController.createImages);
 router.get(`/:id(${Regex.positiveInt})/images/:filename`, verifyGroup, groupController.getImage);
-router.patch(`/:id(${Regex.positiveInt})/images/:filename`, verifyGroup, groupController.updateImage);
-router.delete(`/:id(${Regex.positiveInt})/images/:filename`, verifyGroup, groupController.removeImage);
 
 module.exports = router;
