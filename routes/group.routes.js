@@ -13,14 +13,22 @@ const groupController = new CrudController(GroupSettings);
 
 const { verifyAdmin, verifyGroup, verifyToken, verifyUser } = require('../middleware/auth');
 const check = require('../middleware/validation/check');
-const { QueryCommon, NewGroupData, GroupData } = require('../middleware/validation/schemas');
+const {
+  QueryCommon,
+  NewGroupData,
+  GroupData,
+  NewUserData
+} = require('../middleware/validation/schemas');
 
 router.get(`/`, check(QueryCommon), verifyAdmin, groupController.getMany)
-router.post(`/`, check(NewGroupData), verifyToken, groupController.create);
+router.post(`/`, check(NewGroupData), verifyAdmin, groupController.create);
   
 router.get(`/:id(${Regex.positiveInt})`, verifyGroup, groupController.getOne);
-router.patch(`/:id(${Regex.positiveInt})`, check(GroupData), verifyGroup, groupController.update);
-router.delete(`/:id(${Regex.positiveInt})`, verifyGroup, groupController.remove);
+router.patch(`/:id(${Regex.positiveInt})`, check(GroupData), verifyAdmin, groupController.update);
+router.delete(`/:id(${Regex.positiveInt})`, verifyAdmin, groupController.remove);
+
+router.get(`/:id(${Regex.positiveInt})/users`, verifyAdmin, groupController.getUsers);
+router.post(`/:id(${Regex.positiveInt})/users`, verifyAdmin, groupController.createUsers);
 
 router.get(`/:id(${Regex.positiveInt})/details`, verifyGroup, groupController.getGroupDetails);
 router.post(`/:id(${Regex.positiveInt})/details`, verifyGroup, groupController.createGroupDetails);

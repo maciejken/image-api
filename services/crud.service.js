@@ -24,8 +24,14 @@ function CrudService(settings) {
         })
       });
   };
-  this.getMany = ({ page, size, order }) => {
+  this.getMany = ({ page, size, order, filters }) => {
     const query = buildQuery({ page, size, order });
+    if (filters) {
+      query.where = {};
+      filters.forEach(f => {
+        query.where[f.attribute] = f.value
+      });
+    }
     return this.model.findAll(query);
   };
   this.update = async (id, value) => {

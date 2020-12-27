@@ -72,6 +72,13 @@ module.exports = {
         otherKey: 'detailId',
       },
       {
+        model: User,
+        modelName: 'User',
+        eager: true,
+        otherKey: 'userId',
+        through: UserGroup,
+      },
+      {
         model: Image,
         modelName: 'Image',
         otherKey: 'filename',
@@ -95,7 +102,13 @@ module.exports = {
         otherKey: 'detailId',
         updateOnDuplicate: ['name']
       },
-    ]
+    ],
+    filters: [
+      (req, res) => ({
+        attribute: 'groupId',
+        value: res.locals.groups
+      }),
+    ],
   },
   UserSettings: {
     model: User,

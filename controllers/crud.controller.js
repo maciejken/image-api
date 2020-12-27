@@ -3,14 +3,14 @@
 const CrudService = require('../services/crud.service');
 
 function CrudController(settings) {
-  const { linkedModels, identifierKey, foreignKey } = settings;
+  const { linkedModels, identifierKey, foreignKey, filters } = settings;
   this.linkedModels = linkedModels || [];
   this.identifierKey = identifierKey || 'id';
   this.foreignKey = foreignKey;
   this.service = new CrudService(settings);
+  this.filters = filters;
   this.create = async (req, res, next) => {
     try {
-      console.log('this', this);
       const createdItem = await this.service.create(req.body);
       res.status(200).json(createdItem);
     } catch (err) {
@@ -20,7 +20,11 @@ function CrudController(settings) {
   this.getMany = async (req, res, next) => {
     try {
       const { order, page, size } = req.query;
-      const items = await this.service.getMany({ order, page, size });
+      let filters;
+      if (this.filters) {
+        filters = this.filters.map(f => f(req, res));
+      }
+      const items = await this.service.getMany({ order, page, size, filters });
       res.status(200).json(items);      
     } catch (err) {
       next(err);
