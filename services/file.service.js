@@ -2,6 +2,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 const path = require('path');
 const { ExifImage } = require('exif');
+const { ImageDetails } = require('../enum');
 
 const CustomError = require('../middleware/errors/custom-error');
 const { pathToPrivateUploads, pathToThumbnails } = require('../config');
@@ -28,11 +29,11 @@ function parseExif(data) {
     const camera = (image && `${image.Make} ${image.Model}`) || null;
     if (width && height) {
       exifDetails.push(
-        { name: 'exif-width', content: width },
-        { name: 'exif-height', content: height },
-        { name: 'exif-location', content: location },
-        { name: 'exif-datetime', content: datetime },
-        { name: 'exif-camera', content: camera },
+        { name: ImageDetails.ExifWidth, content: width },
+        { name: ImageDetails.ExifHeight, content: height },
+        { name: ImageDetails.ExifLocation, content: location },
+        { name: ImageDetails.ExifDatetime, content: datetime },
+        { name: ImageDetails.ExifCamera, content: camera },
       );
     }
   }

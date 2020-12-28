@@ -1,8 +1,20 @@
-function buildQuery({ order, page, size }) {
-  order = order.split(',').map(o => o.split(' '));
-  const offset = (page - 1) * size;
-  const limit = offset + size;
-  return { order, limit, offset };
+function buildQuery({ order, page, size, filters }) {
+  let query = {};
+  if (order) {
+    query.order = order.split(',').map(o => o.split(' '));;
+  }
+  if (page && size) {
+    const offset = (page - 1) * size;
+    query.offset = offset;
+    query.limit = offset + size;
+  }
+  if (filters) {
+    query.where = {};
+    filters.forEach(f => {
+      query.where[f.attribute] = f.value
+    });
+  }
+  return query;
 };
 
 function capitalize(word) {

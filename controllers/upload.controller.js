@@ -1,10 +1,8 @@
 const path = require('path');
 const fileService = require('../services/file.service');
-const { ImageSettings } = require('../config');
-const CrudService = require('../services/crud.service');
-const imageService = new CrudService(ImageSettings);
-const { pathToPrivateUploads, pathToThumbnails } = require('../config');
+const { pathToPrivateUploads, pathToThumbnails, adminGroupId } = require('../config');
 const CustomError = require('../middleware/errors/custom-error');
+const uploadService = require('../services/upload.service');
 
 module.exports = {
   getUploadInfo(req, res, next) {
@@ -43,43 +41,22 @@ module.exports = {
   async createImages(req, res, next) {
     try {
       const { userId, groupId } = res.locals;
-      const images = await Promise.all(req.files.map(async f => {
-        const { filename, size, exifDetails } = f;
-        const image = await imageService.create({
-          filename,
-          userId,
-          groupId,
-        });
-        const details = [];
-        details.push({ name: 'file-size', content: size });
-        details.push(...exifDetails);
-        await imageService.createImageDetails({
-          value: details,
-          foreignKey: { name: 'filename', value: filename },
-        });
-        return image;
-      }));
+      const images = await uploadService.createUploads({ userId, groupId, files: req.files });
       res.status(201).json(images);
     } catch (err) {
       next(err);
     }
   },
-  async removeImage(req, res, next) {
+  async removeUploads(req, res, next) {
     try {
-      const { filename } = req.params;
-      const image = await imageService.getOne(filename);
-      const { userId } = res.locals;
-      if (!image) {
-        throw new CustomError(`File ${filename} not found`, 404);
-      } else if (image.userId === userId) {
-        const removeMainFile = fileService.removeFile(path.join(pathToPrivateUploads, filename));
-        const removeThumbnail = fileService.removeFile(path.join(pathToThumbnails, filename));
-        const removeFromDb = imageService.remove(filename);
-        await Promise.all([removeMainFile, removeThumbnail, removeFromDb]);
-        res.status(200).json({ message: `File ${filename} removed` });
-      } else {
-        throw new CustomError(`User ${userId} is not permitted to remove file ${filename}`, 403);
-      }
+      const { filename } = { ...req.params, ...req.body };
+      const filenames = Array.isArray(filename) ? filename : [filename];
+      const fileCount = await uploadService.removeUploads({
+        userId: res.locals.userId,
+        filenames,
+        isAdmin: res.locals.groups.includes(adminGroupId),
+      });
+      res.status(200).json({ message: `${fileCount} file(s) removed` });
     } catch (err) {
       next(err);
     }

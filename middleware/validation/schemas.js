@@ -90,11 +90,17 @@ module.exports = {
   },
   NewImageData: {},
   ImageData: {},
-  UploadQuery: {
-    groupId: {
-      in: 'query',
-      isInt: {
-        options: { min: 1, max: 100 }
+  BodyFilename: {
+    filename: {
+      in: 'body',
+      isArray: true,
+    },
+  },
+  ParamFilename: {
+    filename: {
+      in: 'params',
+      matches: {
+        options: Regex.filename
       }
     }
   }

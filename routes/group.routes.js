@@ -16,8 +16,7 @@ const check = require('../middleware/validation/check');
 const {
   QueryCommon,
   NewGroupData,
-  GroupData,
-  NewUserData
+  GroupData
 } = require('../middleware/validation/schemas');
 
 router.get(`/`, check(QueryCommon), verifyAdmin, groupController.getMany)
@@ -29,6 +28,12 @@ router.delete(`/:id(${Regex.positiveInt})`, verifyAdmin, groupController.remove)
 
 router.get(`/:id(${Regex.positiveInt})/users`, verifyAdmin, groupController.getUsers);
 router.post(`/:id(${Regex.positiveInt})/users`, verifyAdmin, groupController.createUsers);
+router.get(`/:id(${Regex.positiveInt})/users/:userId`, verifyAdmin, groupController.getUser);
+router.delete(
+  `/:id(${Regex.positiveInt})/users/:userId(${Regex.positiveInt})`,
+  verifyAdmin,
+  groupController.removeUser,
+);
 
 router.get(`/:id(${Regex.positiveInt})/details`, verifyGroup, groupController.getGroupDetails);
 router.post(`/:id(${Regex.positiveInt})/details`, verifyGroup, groupController.createGroupDetails);

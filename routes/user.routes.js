@@ -1,4 +1,5 @@
 const express = require('express');
+const { body } = require('express-validator');
 const router = express.Router();
 
 const { UserSettings } = require('../config');
@@ -9,7 +10,7 @@ const uploadController = require('../controllers/upload.controller');
 
 const { verifyAdmin, verifyAddress, verifyGroup, verifyUser } = require('../middleware/auth');
 const check = require('../middleware/validation/check');
-const { QueryCommon, NewUserData, UserData } = require('../middleware/validation/schemas');
+const { BodyFilename, QueryCommon, NewUserData, UserData } = require('../middleware/validation/schemas');
 
 router.get(`/`, check(QueryCommon), verifyAdmin, userController.getMany)
 router.post(`/`, check(NewUserData), verifyAddress, userController.create);
@@ -41,8 +42,17 @@ router.get(`/:id(${Regex.positiveInt})/cv/:cvId`, verifyUser, userController.get
 router.patch(`/:id(${Regex.positiveInt})/cv/:cvId`, verifyUser, userController.updateCv);
 router.delete(`/:id(${Regex.positiveInt})/cv/:cvId`, verifyUser, userController.removeCv);
 
+router.get(`/:id(${Regex.positiveInt})/images`, verifyUser, userController.getImages);
+router.get(`/:id(${Regex.positiveInt})/images/:filename`, verifyUser, userController.getImage);
 // create as group to share with other group members (read-only), edit and remove as user
 router.patch(`/:id(${Regex.positiveInt})/images/:filename`, verifyUser, userController.updateImage);
-router.delete(`/:id(${Regex.positiveInt})/uploads/:filename`, verifyUser, uploadController.removeImage);
+
+router.delete(
+  `/:id(${Regex.positiveInt})/uploads`,
+  check(BodyFilename),
+  verifyUser,
+  uploadController.removeUploads
+);
+router.delete(`/:id(${Regex.positiveInt})/uploads/:filename`, verifyUser, uploadController.removeUploads);
 
 module.exports = router;
