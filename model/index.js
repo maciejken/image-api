@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const logger = require('../libs/logger')('model');
+const { SequelizeOptions } = require('../config');
 
 const UserModel = require('./user.model');
 const UserDetailModel = require('./user-detail.model');
@@ -13,11 +14,7 @@ const CvDetailModel = require('./cv-detail.model');
 const ExperienceModel = require('./experience.model');
 const ExperienceDetailModel = require('./experience-detail.model');
 
-const db = new Sequelize({
-  dialect: process.env.SEQUELIZE_DIALECT,
-  storage: process.env.SEQUELIZE_STORAGE,
-  logging: process.env.SEQUELIZE_LOGGING
-});
+const db = new Sequelize(SequelizeOptions);
 
 const User = UserModel(db, Sequelize);
 const UserDetail = UserDetailModel(db, Sequelize);
