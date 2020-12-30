@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const logger = require('../libs/logger')('model');
-const { SequelizeOptions } = require('../config');
 
 const UserModel = require('./user.model');
 const UserDetailModel = require('./user-detail.model');
@@ -14,7 +13,17 @@ const CvDetailModel = require('./cv-detail.model');
 const ExperienceModel = require('./experience.model');
 const ExperienceDetailModel = require('./experience-detail.model');
 
-const db = new Sequelize(SequelizeOptions);
+const db = new Sequelize({
+  // shouldn't move these opts to config to avoid circular dependency
+  username: process.env.SEQUELIZE_USERNAME,
+  password: process.env.SEQUELIZE_PASSWORD,
+  host: process.env.SEQUELIZE_HOST,
+  port: process.env.SEQUELIZE_PORT,
+  dialect: process.env.SEQUELIZE_DIALECT,
+  storage: process.env.SEQUELIZE_STORAGE,
+  database: process.env.SEQUELIZE_DATABASE,
+  logging: process.env.SEQUELIZE_LOGGING,
+});
 
 const User = UserModel(db, Sequelize);
 const UserDetail = UserDetailModel(db, Sequelize);

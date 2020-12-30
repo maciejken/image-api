@@ -13,16 +13,6 @@ module.exports = {
   pathToPrivateUploads: process.env.PATH_TO_UPLOADS,
   pathToThumbnails: process.env.PATH_TO_THUMBNAILS,
   adminGroupId: parseInt(process.env.ADMIN_GROUP_ID),
-  SequelizeOptions: {
-    username: process.env.SEQUELIZE_USERNAME,
-    password: process.env.SEQUELIZE_PASSWORD,
-    host: process.env.SEQUELIZE_HOST,
-    port: process.env.SEQUELIZE_PORT,
-    dialect: process.env.SEQUELIZE_DIALECT,
-    storage: process.env.SEQUELIZE_STORAGE,
-    database: process.env.SEQUELIZE_DATABASE,
-    logging: process.env.SEQUELIZE_LOGGING,
-  },
   CvSettings: {
     model: Cv,
     foreignKey: 'cvId',

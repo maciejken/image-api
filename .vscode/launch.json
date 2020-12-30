@@ -15,7 +15,7 @@
         "NODE_ENV": "development",
         "CERT_DIR": "C:\\Users\\macie\\.ssl\\certs",
         "PORT": "3210",
-        "SEQUELIZE_USER": "",
+        "SEQUELIZE_USERNAME": "",
         "SEQUELIZE_PASSWORD": "",
         "SEQUELIZE_HOST": "localhost",
         "SEQUELIZE_PORT": "5432",

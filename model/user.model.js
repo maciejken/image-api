@@ -9,14 +9,10 @@ module.exports = function UserModel(db, Sequelize) {
       primaryKey: true,
       allowNull: false
     },
-    email: {
+    username: {
       type: Sequelize.STRING,
       unique: true,
       allowNull: false
-    },
-    name: {
-      type: Sequelize.STRING,
-      allowNull: true,
     },
     password: {
       type: Sequelize.STRING,

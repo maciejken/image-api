@@ -2,40 +2,47 @@
 
 const { buildQuery } = require('../utils');
 
-function CrudService(settings) {  
-  const { model, linkedModels, identifierKey } = settings;
-  this.model = model;
-  this.linkedModels = linkedModels || [];
-  this.identifierKey = identifierKey || 'id';
-  this.create = (value) => {
-    return this.model.create(value);
-  };
-  this.getOne = (id) => {
-    return this.model.findByPk(id, {
-      include: linkedModels
-        .filter(lm => lm.eager)
-        .map(lm => {
-          const { model, through, as } = lm;
-          const val = { model, through, as };
-          if (lm.include) {
-            val.include = lm.include;
-          }
-          return val;
-        })
-      });
-  };
-  this.getMany = ({ page, size, order, filters }) => {
-    const query = buildQuery({ page, size, order, filters });
-    return this.model.findAll(query);
-  };
-  this.update = async (id, value) => {
-    const instance = await this.model.findByPk(id);
-    return instance && instance.update(value);
-  };
-  this.remove = (id) => {
-    return this.model.destroy({ where: { [this.identifierKey]: id } });
+class CrudService {
+  model;
+  linkedModels;
+  identifierKey;
+
+  constructor(settings) {
+    this.model = settings.model;
+    this.linkedModels = settings.linkedModels || [];
+    this.identifierKey = settings.identifierKey || 'id';
+    this.create = (value) => {
+      return this.model.create(value);
+    };
+    this.getOne = (id) => {
+      return this.model.findByPk(id, {
+        include: linkedModels
+          .filter(lm => lm.eager)
+          .map(lm => {
+            const { model, through, as } = lm;
+            const val = { model, through, as };
+            if (lm.include) {
+              val.include = lm.include;
+            }
+            return val;
+          })
+        });
+    };
+    this.getMany = ({ page, size, order, filters }) => {
+      const query = buildQuery({ page, size, order, filters });
+      return this.model.findAll(query);
+    };
+    this.update = async (id, value) => {
+      const instance = await this.model.findByPk(id);
+      return instance && instance.update(value);
+    };
+    this.remove = (id) => {
+      return this.model.destroy({ where: { [this.identifierKey]: id } });
+    };
+
+    generateLinkedModelMethods(this, settings.linkedModels);
   }
-  generateLinkedModelMethods(this, linkedModels);
+  
 };
 
 function generateLinkedModelMethods(ctx, linkedModels) {

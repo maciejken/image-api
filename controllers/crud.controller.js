@@ -2,59 +2,67 @@
 
 const CrudService = require('../services/crud.service');
 
-function CrudController(settings) {
-  const { linkedModels, identifierKey, foreignKey, filters } = settings;
-  this.linkedModels = linkedModels || [];
-  this.identifierKey = identifierKey || 'id';
-  this.foreignKey = foreignKey;
-  this.service = new CrudService(settings);
-  this.filters = filters;
-  this.create = async (req, res, next) => {
-    try {
-      const createdItem = await this.service.create(req.body);
-      res.status(200).json(createdItem);
-    } catch (err) {
-      next(err);
-    }
-  };
-  this.getMany = async (req, res, next) => {
-    try {
-      const { order, page, size } = req.query;
-      let filters;
-      if (this.filters) {
-        filters = this.filters.map(f => f(req, res));
+class CrudController {
+  linkedModels;
+  identifierKey;
+  foreignKey;
+  service;
+  filters;
+
+  constructor(settings) {
+    this.linkedModels = settings.linkedModels || [];
+    this.identifierKey = settings.identifierKey || 'id';
+    this.foreignKey = settings.foreignKey;
+    this.service = new CrudService(settings);
+    this.filters = settings.filters;
+    this.create = async (req, res, next) => {
+      try {
+        const createdItem = await this.service.create(req.body);
+        res.status(200).json(createdItem);
+      } catch (err) {
+        next(err);
       }
-      const items = await this.service.getMany({ order, page, size, filters });
-      res.status(200).json(items);      
-    } catch (err) {
-      next(err);
-    }  
-  };
-  this.getOne = async (req, res, next) => {
-    try {
-      const item = await this.service.getOne(req.params[this.identifierKey]);
-      res.status(200).json(item);      
-    } catch (err) {
-      next(err);
-    }
-  };
-  this.update = async (req, res, next) => {
-    try {
-      const updatedItem = await this.service.update(req.params[this.identifierKey], req.body);
-      res.status(200).json(updatedItem);
-    } catch (err) {
-      next(err);
-    }
-  };
-  this.remove = async (req, res, next) => {
-    try {
-      const result = await this.service.remove(req.params[this.identifierKey]);
-      res.status(200).json(result);
-    } catch (err) {
-      next(err);
-    }
-  };
-  generateLinkedModelMethods(this, linkedModels);
+    };
+    this.getMany = async (req, res, next) => {
+      try {
+        const { order, page, size } = req.query;
+        let filters;
+        if (this.filters) {
+          filters = this.filters.map(f => f(req, res));
+        }
+        const items = await this.service.getMany({ order, page, size, filters });
+        res.status(200).json(items);      
+      } catch (err) {
+        next(err);
+      }  
+    };
+    this.getOne = async (req, res, next) => {
+      try {
+        const item = await this.service.getOne(req.params[this.identifierKey]);
+        res.status(200).json(item);      
+      } catch (err) {
+        next(err);
+      }
+    };
+    this.update = async (req, res, next) => {
+      try {
+        const updatedItem = await this.service.update(req.params[this.identifierKey], req.body);
+        res.status(200).json(updatedItem);
+      } catch (err) {
+        next(err);
+      }
+    };
+    this.remove = async (req, res, next) => {
+      try {
+        const result = await this.service.remove(req.params[this.identifierKey]);
+        res.status(200).json(result);
+      } catch (err) {
+        next(err);
+      }
+    };
+    generateLinkedModelMethods(this, settings.linkedModels);
+  }
+
 }
 
 function generateLinkedModelMethods(ctx, linkedModels) {

@@ -5,10 +5,10 @@ const { User } = require('../model');
 const CustomError = require('../middleware/errors/custom-error');
 
 async function getTokenFromBasic(auth) {
-  const [email, password] = Buffer.from(auth, 'base64')
+  const [username, password] = Buffer.from(auth, 'base64')
     .toString('ascii')
     .split(':');
-  const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ where: { username } });
   if (user && user.isCorrectPassword(password)) {
     return getSignedToken(user);        
   } else {

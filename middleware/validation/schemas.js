@@ -10,14 +10,17 @@ const ContentType = {
   },
 };
 
-const email = {
+const username = {
   in: 'body',
-  isEmail: true  
+  errorMessage: 'username must be 3-24 characters long (lowercase letters and/or digits)',
+  matches: {
+    options: Regex.username
+  }, 
 };
 
 const password = {
   in: 'body',
-  errorMessage: 'password must be 6-24 characters long (upper/lowercase letters, digits or special characters like `!`, `@`, `#`, etc.)',
+  errorMessage: 'password must be 8-24 characters long (upper/lowercase letters, digits and/or special characters like `!`, `@`, `#`, etc.)',
   matches: {
     options: Regex.password
   },
@@ -34,13 +37,13 @@ const name = {
 module.exports = {
   NewUserData: {
     ...ContentType,
-    email,
+    username,
     password,
   },
   UserData: {
     ...ContentType,
-    email: {
-      ...email,
+    username: {
+      ...username,
       optional: true,
     },
     password: {
