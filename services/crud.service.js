@@ -16,7 +16,7 @@ class CrudService {
     };
     this.getOne = (id) => {
       return this.model.findByPk(id, {
-        include: linkedModels
+        include: settings.linkedModels
           .filter(lm => lm.eager)
           .map(lm => {
             const { model, through, as } = lm;
