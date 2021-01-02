@@ -9,5 +9,5 @@ module.exports = {
     BearerAuth: `^Bearer \\S{150,160}$`,
     localAddress: `^(::1|::ffff:${process.env.LAN_ADDRESS}\\d{2})$`,
     groupName: `^[a-z-]{4,10}`,
-    filename: `^[a-zA-Z0-9-_]{1,30}[.][a-zA-Z]{3,4}$`,
+    filename: `^[a-zA-Z0-9-_]{1,48}[.][a-zA-Z]{3,4}$`,
   };
