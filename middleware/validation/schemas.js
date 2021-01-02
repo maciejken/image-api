@@ -72,23 +72,21 @@ module.exports = {
         options: value => value || 'createdAt desc'
       }
     },
-    page: {
+    year: {
       in: 'query',
       custom: {
         options: CustomValidator.isPositiveInt
       },
       customSanitizer: {
-        options: value => value || '1'
+        options: value => value || new Date().getFullYear().toString()
       }
     },
-    size: {
+    month: {
       in: 'query',
       custom: {
         options: CustomValidator.isPositiveInt
       },
-      customSanitizer: {
-        options: value => value || '10'
-      }
+      optional: true,
     }
   },
   NewImageData: {},
