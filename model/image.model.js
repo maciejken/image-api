@@ -20,7 +20,7 @@ module.exports = function ImageModel(db, Sequelize) {
       allowNull: true,
     },
     description: {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: true,
     },
   });
