@@ -1,0 +1,16 @@
+pipeline {
+  agent {
+    node { label 'master' }
+  }
+  stages {
+    stage('docker build') {
+      sh 'docker build -t my_content_api .'
+    }
+    stage('docker run') {
+      steps {
+        sh 'docker stop my_content_api || true'
+        sh 'docker run -it --rm -d -p 8001:80 --name my_content_api my_content_api'
+      }
+    }
+  }
+}

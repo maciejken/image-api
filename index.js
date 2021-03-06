@@ -1,12 +1,11 @@
 const express = require('express');
-const fs = require('fs');
-const spdy = require('spdy');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const responseTime = require('response-time');
 const helmet = require('helmet');
 const path = require('path');
+const http = require('http');
 
 const logger = require('./libs/logger')('server');
 const errorHandler = require('./middleware/errors/error-handler');
@@ -56,16 +55,9 @@ app.use(logRequestError);
 app.use(errorHandler);
 
 const port = process.env.PORT;
-const certDir = process.env.CERT_DIR;
-logger.debug(`cert/key loaded from "${certDir}"`);
 
-const opts = {
-  key: fs.readFileSync(`${certDir}/privkey.pem`),
-  cert: fs.readFileSync(`${certDir}/fullchain.pem`)
-};
-
-spdy
-  .createServer(opts, app)
+http
+  .createServer(app)
   .listen(port, () => {
     logger.info(`server listening on port ${port}`);
 });

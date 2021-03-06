@@ -4,11 +4,11 @@ const CustomError = require('../middleware/errors/custom-error');
 
 function authorize(res, token) {
   const expires = new Date(Date.now() + process.env.ID_TOKEN_VALIDITY_SECONDS * 1000);
-  res.cookie('authorization', `Bearer ${token}`, { expires, sameSite: true, secure: true });
-  res.cookie('authExpires', expires.getTime(), { expires, sameSite: true });
+  res.cookie('authorization', `Bearer ${token}`, { expires, http: true });
+  res.cookie('authExpires', expires.getTime(), { expires });
   const jwt = authService.verifyToken(token);
-  res.cookie('userId', jwt.sub, { expires, sameSite: true });
-  res.cookie('userGroups', jwt.groups, { expires, sameSite: true });
+  res.cookie('userId', jwt.sub, { expires });
+  res.cookie('userGroups', jwt.groups, { expires });
   res.status(200).send({ expires: expires.getTime(), user: jwt.sub, groups: jwt.groups });
 }
 
