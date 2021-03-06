@@ -13,7 +13,6 @@
       "outputCapture": "std",
       "env": {
         "NODE_ENV": "development",
-        "CERT_DIR": "C:\\Users\\macie\\.ssl\\certs",
         "PORT": "3210",
         "SEQUELIZE_USERNAME": "",
         "SEQUELIZE_PASSWORD": "",

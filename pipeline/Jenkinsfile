@@ -16,7 +16,9 @@ pipeline {
     stage('docker run') {
       steps {
         sh 'docker stop my_content_api || true'
-        sh 'docker run -it --rm -d -p 8001:80 --name my_content_api my_content_api'
+        sh 'docker rm my_content_api || true'
+        sh 'docker run -it -d -p 8001:80 --name my_content_api \
+            -v /home/uploads:/app/uploads my_content_api'
       }
     }
   }

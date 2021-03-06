@@ -1,6 +1,6 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const privateKey = fs.readFileSync(`${process.env.CERT_DIR}/privkey.pem`);
+const serverKey = fs.readFileSync('../server.key');
 const { User } = require('../model');
 const CustomError = require('../middleware/errors/custom-error');
 
@@ -26,12 +26,12 @@ async function getSignedToken(user) {
     expiresIn: process.env.ID_TOKEN_VALIDITY_SECONDS * 1000,
     subject: String(user.id)
   };
-  return jwt.sign(payload, privateKey, options);
+  return jwt.sign(payload, serverKey, options);
 }
 
 function verifyToken(token) {
   try {
-    return jwt.verify(token, privateKey);      
+    return jwt.verify(token, serverKey);      
   } catch (err) {
     throw new CustomError(err.message, 403);
   }

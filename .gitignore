@@ -5,3 +5,4 @@ public/*
 !.env.sample
 *.sqlite
 *.log
+*.key
