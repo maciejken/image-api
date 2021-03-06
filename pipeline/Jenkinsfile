@@ -4,7 +4,9 @@ pipeline {
   }
   stages {
     stage('docker build') {
-      sh 'docker build -t my_content_api .'
+      steps {
+        sh 'docker build -t my_content_api .'
+      }
     }
     stage('docker run') {
       steps {
