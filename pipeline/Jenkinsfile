@@ -3,6 +3,11 @@ pipeline {
     node { label 'master' }
   }
   stages {
+    stage('npm install') {
+      steps {
+        sh 'npm install'
+      }
+    }
     stage('docker build') {
       steps {
         sh 'docker build -t my_content_api .'
