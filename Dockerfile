@@ -28,6 +28,7 @@ RUN mkdir uploads/thumbnails
 
 # add app
 COPY . ./
+RUN npm install sqlite3
 
 # start app
 CMD ["npm", "start"]
