@@ -23,13 +23,15 @@ ENV API_PREFIX=/api
 ENV RATE_LIMIT_WINDOW_MS=900
 ENV RATE_LIMIT_MAX=3
 
-RUN mkdir uploads
-RUN mkdir uploads/thumbnails
-
+# install node-gyp dependencies
+RUN apk add python make gcc g++
 # add app
 COPY . ./
-RUN apk add python make gcc g++
-RUN npm install sqlite3
+RUN npm install --quiet
+RUN npm install --quiet sqlite3
+
+RUN mkdir uploads
+RUN mkdir uploads/thumbnails
 
 # start app
 CMD ["npm", "start"]
