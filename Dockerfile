@@ -5,7 +5,7 @@ WORKDIR /app
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH=/app/node_modules/.bin:$PATH
 ENV NODE_ENV=development
-ENV PORT=8001
+ENV PORT=80
 # ENV SEQUELIZE_USERNAME=''
 # ENV SEQUELIZE_PASSWORD=''
 # ENV SEQUELIZE_HOST=localhost
