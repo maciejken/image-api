@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:14.15.5
 
 WORKDIR /app
 
@@ -25,7 +25,9 @@ ENV RATE_LIMIT_WINDOW_MS=900
 ENV RATE_LIMIT_MAX=3
 
 # install node-gyp dependencies
-RUN apk add python make gcc g++
+RUN apt install python make gcc g++
+# install libvips dependencies
+RUN apt install build-essential pkg-config glib2.0-dev libexpat1-dev
 # add app
 COPY . ./
 RUN npm install --silent
