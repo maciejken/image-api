@@ -28,7 +28,6 @@ RUN apk add python make gcc g++
 # add app
 COPY . ./
 RUN npm install --quiet
-RUN npm install --quiet sqlite3
 
 RUN mkdir uploads
 RUN mkdir uploads/thumbnails
