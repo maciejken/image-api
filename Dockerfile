@@ -28,6 +28,7 @@ RUN mkdir uploads/thumbnails
 
 # add app
 COPY . ./
+RUN apk add python make gcc g++
 RUN npm install sqlite3
 
 # start app
