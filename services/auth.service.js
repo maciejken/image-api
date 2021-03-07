@@ -1,6 +1,7 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const serverKey = fs.readFileSync('../server.key');
+const path = require('path');
+const serverKey = fs.readFileSync(path.resolve(__dirname, '../server.key'));
 const { User } = require('../model');
 const CustomError = require('../middleware/errors/custom-error');
 
@@ -31,7 +32,7 @@ async function getSignedToken(user) {
 
 function verifyToken(token) {
   try {
-    return jwt.verify(token, serverKey);      
+    return jwt.verify(token, serverKey);
   } catch (err) {
     throw new CustomError(err.message, 403);
   }
