@@ -31,7 +31,7 @@ RUN apt-get install -y nodejs python make gcc g++
 RUN apt-get install -y build-essential pkg-config glib2.0-dev libexpat1-dev
 # add app
 COPY . ./
-RUN npm install --silent
+RUN npm install --quiet
 
 RUN mkdir uploads
 RUN mkdir uploads/thumbnails
