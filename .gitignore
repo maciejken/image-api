@@ -6,3 +6,5 @@ public/*
 *.sqlite
 *.log
 *.key
+*.tar.gz
+*.deb
