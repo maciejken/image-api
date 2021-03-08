@@ -31,7 +31,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q nodejs npm python make 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q build-essential pkg-config glib2.0-dev libexpat1-dev libjpeg-dev
 # add app
 COPY . ./
-RUN tar xf vips-8.10.5
+RUN tar xf vips-8.10.5.tar.gz
 RUN cd vips-8.10.5
 RUN ./configure && make
 RUN make install && cd ..
