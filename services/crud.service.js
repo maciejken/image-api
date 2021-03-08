@@ -3,9 +3,9 @@
 const { buildQuery } = require('../utils');
 
 class CrudService {
-  model;
-  linkedModels;
-  identifierKey;
+  // model;
+  // linkedModels;
+  // identifierKey;
 
   constructor(settings) {
     this.model = settings.model;

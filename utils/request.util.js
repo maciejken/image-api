@@ -1,6 +1,6 @@
 module.exports = {
   getAccessToken(req) {
-    const { authExpiration, authorization } = { ...req.cookies, ...req.headers };
-    return authExpiration && authorization && authorization.replace('Bearer ', '');
+    const { authExpires, authorization } = { ...req.cookies, ...req.headers };
+    return authExpires && authorization && authorization.replace('Bearer ', '');
   },
 };

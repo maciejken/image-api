@@ -3,11 +3,11 @@
 const CrudService = require('../services/crud.service');
 
 class CrudController {
-  linkedModels;
-  identifierKey;
-  foreignKey;
-  service;
-  filters;
+  // linkedModels;
+  // identifierKey;
+  // foreignKey;
+  // service;
+  // filters;
 
   constructor(settings) {
     this.linkedModels = settings.linkedModels || [];
