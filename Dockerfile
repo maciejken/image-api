@@ -28,9 +28,13 @@ ENV RATE_LIMIT_MAX=3
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q nodejs npm python make gcc g++
 # install libvips dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q build-essential pkg-config glib2.0-dev libexpat1-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q build-essential pkg-config glib2.0-dev libexpat1-dev libjpeg-dev
 # add app
 COPY . ./
+RUN tar xf vips-8.10.5
+RUN cd vips-8.10.5
+RUN ./configure && make
+RUN make install && cd ..
 RUN npm install --quiet
 
 RUN mkdir uploads
