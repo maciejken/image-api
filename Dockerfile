@@ -32,10 +32,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q build-essential pkg-con
 # add app
 COPY . ./
 RUN tar xf vips-8.10.5.tar.gz
-RUN cd vips-8.10.5
-RUN ./configure && make
-RUN make install && cd ..
-RUN npm install --quiet
+RUN cd vips-8.10.5 && ./configure && make && make install
+RUN pwd && node -v && npm -v && npm install --quiet
 
 RUN mkdir uploads
 RUN mkdir uploads/thumbnails
