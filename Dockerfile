@@ -26,9 +26,9 @@ ENV RATE_LIMIT_MAX=3
 
 # install node-gyp dependencies
 RUN apt-get update
-RUN apt-get install -y nodejs npm python make gcc g++
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q nodejs npm python make gcc g++
 # install libvips dependencies
-RUN apt-get install -y build-essential pkg-config glib2.0-dev libexpat1-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q build-essential pkg-config glib2.0-dev libexpat1-dev
 # add app
 COPY . ./
 RUN npm install --quiet
