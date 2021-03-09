@@ -39,4 +39,4 @@ RUN mkdir uploads
 RUN mkdir uploads/thumbnails
 
 # start app
-# CMD ["npm", "start"]
+CMD ["npm", "start"]
