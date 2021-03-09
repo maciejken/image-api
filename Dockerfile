@@ -31,12 +31,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q nodejs npm python make 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q build-essential pkg-config glib2.0-dev libexpat1-dev libjpeg-dev
 # add app
 COPY . ./
-RUN tar xf vips-8.10.5.tar.gz
-RUN cd vips-8.10.5 && ./configure && make && make install
-RUN pwd && node -v && npm -v && npm install --quiet
+# RUN tar xf vips-8.10.5.tar.gz
+# RUN cd vips-8.10.5 && ./configure && make && make install
+RUN npm install --quiet
 
 RUN mkdir uploads
 RUN mkdir uploads/thumbnails
 
 # start app
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
