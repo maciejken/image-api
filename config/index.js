@@ -13,6 +13,7 @@ module.exports = {
   pathToPrivateUploads: process.env.PATH_TO_UPLOADS,
   pathToThumbnails: process.env.PATH_TO_THUMBNAILS,
   adminGroupId: parseInt(process.env.ADMIN_GROUP_ID),
+  localNetworkIp: process.env.LOCAL_NETWORK_IP,
   CvSettings: {
     model: Cv,
     foreignKey: 'cvId',

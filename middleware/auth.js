@@ -1,7 +1,7 @@
 const authService = require('../services/auth.service');
 const CustomError = require('./errors/custom-error');
 const requestUtil = require('../utils/request.util');
-const { Regex } = require('../enum');
+const { localNetworkIp } = require('../config');
 
 const notPermittedError = new CustomError(`unable to perform requested operation`, 403);
 const { adminGroupId } = require('../config');
@@ -22,7 +22,7 @@ function verify(req, res, options) {
     processToken(req, res);
     canAuthorize = true;
   } else if (options.address) {
-    canAuthorize = new RegExp(Regex.localAddress).test(options.address);
+    canAuthorize = localNetworkIp && options.address.includes(localNetworkIp);
   } else {
     processToken(req, res);
     const { groups, userId } = res.locals;
