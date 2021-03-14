@@ -12,8 +12,27 @@ pipeline {
       steps {
         sh 'docker stop my_content_api || true'
         sh 'docker rm my_content_api || true'
-        sh 'docker run -it -d -p 8001:80 --name my_content_api \
-            -v /home/uploads:/app/uploads my_content_api'
+        sh 'docker run -it -d -p $EXT_PORT:$PORT --name my_content_api \
+            -e ADMIN_GROUP_ID=$ADMIN_GROUP_ID \
+            -e ALLOWED_ORIGIN=$ALLOWED_ORIGIN \
+            -e API_PREFIX=$API_PREFIX \
+            -e ID_TOKEN_VALIDITY_SECONDS=$ID_TOKEN_VALIDITY_SECONDS \
+            -e IMAGE_UPLOAD_FIELD_NAME=$IMAGE_UPLOAD_FIELD_NAME \
+            -e LOCAL_NETWORK_IP=$LOCAL_NETWORK_IP \
+            -e PATH_TO_UPLOADS=$PATH_TO_UPLOADS \
+            -e PATH_TO_THUMBNAILS=$PATH_TO_THUMBNAILS \
+            -e PORT=$PORT \
+            -e RATE_LIMIT_MAX=$RATE_LIMIT_MAX \
+            -e RATE_LIMIT_WINDOW_MS=$RATE_LIMIT_WINDOW_MS \
+            -e SEQUELIZE_DIALECT=$SEQUELIZE_DIALECT \
+            -e SEQUELIZE_STORAGE=$SEQUELIZE_STORAGE \
+            -e SEQUELIZE_DATABASE=$SEQUELIZE_DATABASE \
+            -e SEQUELIZE_LOGGING=$SEQUELIZE_LOGGING \
+            -e SEQUELIZE_USERNAME=$SEQUELIZE_USERNAME \
+            -e SEQUELIZE_PASSWORD=$SEQUELIZE_PASSWORD \
+            -e SEQUELIZE_HOST=$SEQUELIZE_HOST \
+            -e SEQUELIZE_PORT=$SEQUELIZE_PORT \
+            -v $EXT_DIR:$PATH_TO_UPLOADS my_content_api'
       }
     }
   }

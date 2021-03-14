@@ -13,7 +13,7 @@
       "outputCapture": "std",
       "env": {
         "NODE_ENV": "development",
-        "PORT": "3210",
+        "PORT": "8001",
         "SEQUELIZE_USERNAME": "",
         "SEQUELIZE_PASSWORD": "",
         "SEQUELIZE_HOST": "localhost",
@@ -23,7 +23,7 @@
         "SEQUELIZE_DATABASE": "images_qa",
         "SEQUELIZE_LOGGING": "",
         "ID_TOKEN_VALIDITY_SECONDS": "900",
-        "ACCESS_CONTROL_ALLOW_ORIGIN": "http://localhost:8000",
+        "ALLOWED_ORIGIN": "http://localhost:8000",
         "IMAGE_UPLOAD_FIELD_NAME": "imageUpload",
         "ADMIN_GROUP_ID": "1",
         "PATH_TO_UPLOADS": "C:\\Users\\macie\\pictures\\uploads",

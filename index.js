@@ -11,7 +11,7 @@ const logger = require('./libs/logger')('server');
 const errorHandler = require('./middleware/errors/error-handler');
 
 const app = express();
-const allowedOrigin = process.env.ACCESS_CONTROL_ALLOW_ORIGIN;
+const allowedOrigin = process.env.ALLOWED_ORIGIN;
 logger.debug(`access control allowed origin is "${allowedOrigin}"`);
 app.use(cors({
   origin: allowedOrigin,
