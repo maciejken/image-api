@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  my_content_api:
+    depends_on:
+      - redis
+    image: my_content_api
+    volumes:
+      - ${EXT_DIR}:${PATH_TO_UPLOADS}
+    ports:
+      - "${EXT_PORT}:${PORT}"
+    restart: always
+    environment:
+      ADMIN_GROUP_ID: ${ADMIN_GROUP_ID}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN}
+      API_PREFIX: ${API_PREFIX}
+      ID_TOKEN_VALIDITY_SECONDS: ${ID_TOKEN_VALIDITY_SECONDS}
+      IMAGE_UPLOAD_FIELD_NAME: ${IMAGE_UPLOAD_FIELD_NAME}
+      LOCAL_NETWORK_IP: ${LOCAL_NETWORK_IP}
+      PATH_TO_UPLOADS: ${PATH_TO_UPLOADS}
+      PATH_TO_THUMBNAILS: ${PATH_TO_THUMBNAILS}
+      PORT: ${PORT}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS}
+      SEQUELIZE_DIALECT: ${SEQUELIZE_DIALECT}
+      SEQUELIZE_STORAGE: ${SEQUELIZE_STORAGE}
+      SEQUELIZE_DATABASE: ${SEQUELIZE_DATABASE}
+      SEQUELIZE_LOGGING: ${SEQUELIZE_LOGGING}
+      SEQUELIZE_USERNAME: ${SEQUELIZE_USERNAME}
+      SEQUELIZE_PASSWORD: ${SEQUELIZE_PASSWORD}
+      SEQUELIZE_HOST: ${SEQUELIZE_HOST}
+      SEQUELIZE_PORT: ${SEQUELIZE_PORT}
+volumes:
+  redis_data: {}
