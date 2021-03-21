@@ -4,7 +4,7 @@ const CustomError = require('../middleware/errors/custom-error');
 
 function authorize(res, token) {
   const expires = new Date(Date.now() + process.env.ID_TOKEN_VALIDITY_SECONDS * 1000);
-  res.cookie('authorization', `Bearer ${token}`, { expires, http: true });
+  res.cookie('authorization', `Bearer ${token}`, { expires, httpOnly: true });
   res.cookie('authExpires', expires.getTime(), { expires });
   const jwt = authService.verifyToken(token);
   res.cookie('userId', jwt.sub, { expires });
