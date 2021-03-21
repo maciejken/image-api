@@ -30,6 +30,7 @@ app.use(session({
   store: new RedisStore({ client: redisClient }),
   secret: process.env.SECRET,
   resave: false,
+  saveUninitialized: true,
 }));
 app.use(cookieParser());
 app.use(helmet());
