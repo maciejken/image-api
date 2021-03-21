@@ -6,6 +6,11 @@ const responseTime = require('response-time');
 const helmet = require('helmet');
 const path = require('path');
 const http = require('http');
+const redis = require('redis');
+const session = require('express-session');
+
+let RedisStore = require('connect-redis')(session);
+let redisClient = redis.createClient();
 
 const logger = require('./libs/logger')('server');
 const errorHandler = require('./middleware/errors/error-handler');
@@ -18,6 +23,11 @@ app.use(cors({
   credentials: true,
 }));
 app.use(bodyParser.json());
+app.use(session({
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.SECRET,
+  resave: false,
+}));
 app.use(cookieParser());
 app.use(helmet());
 app.use(responseTime());
