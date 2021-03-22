@@ -31,6 +31,9 @@ app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 *24
+  }
 }));
 app.use(cookieParser());
 app.use(helmet());
@@ -54,9 +57,9 @@ app.use(`${apiPrefix}/cv`, require('./routes/cv.routes'));
 app.use(`${apiPrefix}/experiences`, require('./routes/experience.routes'));
 
 app.use(express.static(path.resolve('./public')));
-app.get('/cv/*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public/cv', 'index.html'));
-});
+// app.get('/cv/*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'public/cv', 'index.html'));
+// });
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });

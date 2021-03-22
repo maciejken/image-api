@@ -1,6 +1,5 @@
 node_modules
-uploads
-public/*
+public/uploads
 .env*
 !.env.sample
 *.sqlite
