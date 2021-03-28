@@ -29,7 +29,7 @@ services:
       - db
     image: my_content_api
     volumes:
-      - ${API_DIR}:${PATH_TO_UPLOADS}
+      - ${API_HOME}:${PATH_TO_UPLOADS}
     ports:
       - "${API_PORT}:${PORT}"
     restart: always
