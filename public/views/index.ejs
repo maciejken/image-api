@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strona główna</title>
+</head>
+<body>
+  <h1>To działa!</h1>
+  <% if (!user) { %>
+    <p>Witaj! <a href="/login">Zaloguj się</a>.</p>
+  <% } else { %>
+    <p>Witaj, <%= user.username %>. Otwórz swój <a href="/profile">profil</a>.</p>
+  <% } %>
+  <p>Liczba odwiedzin: <%=viewCount%></p>
+  <p><a href="/logout">Wyloguj się</a></p>
+</body>
+</html>

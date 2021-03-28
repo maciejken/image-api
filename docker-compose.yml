@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  redis:
+  cache:
     image: redis
     volumes:
       - redis_data:/data
@@ -10,14 +10,28 @@ services:
     hostname: redis
     restart: always
 
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/data
+    ports:
+      - "${SEQUELIZE_PORT}:5432"
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${SEQUELIZE_DATABASE}
+      POSTGRES_USER: ${SEQUELIZE_USER}
+      POSTGRES_PASSWORD: ${SEQUELIZE_PASSWORD}
+
   my_content_api:
     depends_on:
-      - redis
+      - cache
+      - db
     image: my_content_api
     volumes:
-      - ${EXT_DIR}:${PATH_TO_UPLOADS}
+      - ${API_DIR}:${PATH_TO_UPLOADS}
     ports:
-      - "${EXT_PORT}:${PORT}"
+      - "${API_PORT}:${PORT}"
     restart: always
     environment:
       ADMIN_GROUP_ID: ${ADMIN_GROUP_ID}
@@ -44,3 +58,4 @@ services:
       SEQUELIZE_PORT: ${SEQUELIZE_PORT}
 volumes:
   redis_data: {}
+  postgres_data: {}

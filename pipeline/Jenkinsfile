@@ -10,8 +10,6 @@ pipeline {
     }
     stage('docker run') {
       steps {
-        sh 'docker stop my_content_api || true'
-        sh 'docker rm my_content_api || true'
         sh 'docker-compose up -d'
         // sh 'docker run -it -d -p $EXT_PORT:$PORT --name my_content_api \
         //     -e ADMIN_GROUP_ID=$ADMIN_GROUP_ID \

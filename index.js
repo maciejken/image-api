@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const responseTime = require('response-time');
@@ -8,7 +7,7 @@ const path = require('path');
 const http = require('http');
 const redis = require('redis');
 const session = require('express-session');
-
+const passport = require('passport');
 let RedisStore = require('connect-redis')(session);
 let redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
@@ -25,7 +24,8 @@ app.use(cors({
   origin: allowedOrigin,
   credentials: true,
 }));
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 app.use(session({
   store: new RedisStore({ client: redisClient }),
   secret: process.env.SECRET,
@@ -45,6 +45,10 @@ const logRequestStart = (req, res, next) => {
 };
 app.use(logRequestStart);
 
+require('./config/passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
 const apiPrefix = process.env.API_PREFIX;
 logger.debug(`API prefix is "${apiPrefix}"`);
 
@@ -60,8 +64,64 @@ app.use(express.static(path.resolve('./public')));
 // app.get('/cv/*', (req, res) => {
 //   res.sendFile(path.resolve(__dirname, 'public/cv', 'index.html'));
 // });
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'public', 'views'));
+app.get('/',
+  // (req, res, next) => {
+  //   console.log(req.session);
+  //   console.log(req.user);
+  //   next();
+  // },
+  (req, res) => {
+    if (req.session.viewCount) {
+      req.session.viewCount += 1;
+    } else {
+      req.session.viewCount = 1;
+    }
+    const { viewCount } = req.session;
+    if (req.isAuthenticated()) {
+      res.render('index', { user: req.user, viewCount });
+    } else {
+      res.redirect('/sad-face');
+    }
+  });
+
+app.get('/login',
+  function(req, res){
+    res.render('login');
+  });
+  
+app.post('/login',
+  passport.authenticate('local', {
+    failureRedirect: '/sad-face',
+    successRedirect: '/',
+  }),
+),
+
+app.get('/sad-face', (req, res) => {
+  res.render('sad-face');
+});
+  
+app.get('/logout',
+  function(req, res){
+    req.logout();
+    res.redirect('/sad-face');
+  });
+
+app.get('/profile',
+  function(req, res){
+    res.render('profile', { user: req.user });
+  });
+
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+  if (req.session.viewCount) {
+    req.session.viewCount += 1;
+  } else {
+    req.session.viewCount = 1;
+  }
+  const { viewCount } = req.session;
+  const { user } = res.locals;
+  res.render('index', { user, viewCount });
 });
 
 const logRequestError = (req, res, next) => {
