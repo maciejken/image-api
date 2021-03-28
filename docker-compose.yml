@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       POSTGRES_DB: ${SEQUELIZE_DATABASE}
-      POSTGRES_USER: ${SEQUELIZE_USER}
+      POSTGRES_USER: ${SEQUELIZE_USERNAME}
       POSTGRES_PASSWORD: ${SEQUELIZE_PASSWORD}
 
   my_content_api:
