@@ -8,6 +8,8 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     hostname: redis
+    networks:
+      - redis
     restart: always
 
   db:
@@ -17,6 +19,8 @@ services:
     ports:
       - "${SEQUELIZE_PORT}:5432"
     hostname: postgres
+    networks:
+      - postgres
     restart: always
     environment:
       POSTGRES_DB: ${SEQUELIZE_DATABASE}
@@ -32,6 +36,9 @@ services:
       - ${API_HOME}:${PATH_TO_UPLOADS}
     ports:
       - "${API_PORT}:${PORT}"
+    networks:
+      - redis
+      - postgres
     restart: always
     environment:
       ADMIN_GROUP_ID: ${ADMIN_GROUP_ID}
@@ -59,3 +66,9 @@ services:
 volumes:
   redis_data: {}
   postgres_data: {}
+
+networks:
+  redis:
+    driver: bridge
+  postgres:
+    driver: bridge
