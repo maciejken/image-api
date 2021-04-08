@@ -1,49 +1,36 @@
-const authService = require('../services/auth.service');
 const CustomError = require('./errors/custom-error');
-const requestUtil = require('../utils/request.util');
 const { localNetworkIp } = require('../config');
 
 const notPermittedError = new CustomError(`unable to perform requested operation`, 403);
 const { adminGroupId } = require('../config');
 
-function processToken(req, res) {
-  if (!res.locals.userId) {
-    const token = requestUtil.getAccessToken(req);
-    const verifiedToken = authService.verifyToken(token);
-    const { groups, sub } = verifiedToken;
-    res.locals.userId = parseInt(sub);
-    res.locals.groups = groups;
-  }
-}
+// function verify(req, res, options) {
+//   let canAuthorize;
+//   if (!options) {
+//     canAuthorize = true;
+//   } else if (options.address) {
+//     canAuthorize = localNetworkIp && options.address.includes(localNetworkIp);
+//   } else {
+//     processToken(req, res);
+//     const { groups, userId } = res.locals;
+//     if (options.userId) {
+//       canAuthorize = options.userId === userId;
+//     } else if (options.groupId) {
+//       canAuthorize = groups && (groups.includes(options.groupId) || groups.includes(adminGroupId));
+//       res.locals.groupId = (canAuthorize && options.groupId) || null;
+//     }
+//   }
 
-function verify(req, res, options) {
-  let canAuthorize;
-  if (!options) {
-    processToken(req, res);
-    canAuthorize = true;
-  } else if (options.address) {
-    canAuthorize = localNetworkIp && options.address.includes(localNetworkIp);
-  } else {
-    processToken(req, res);
-    const { groups, userId } = res.locals;
-    if (options.userId) {
-      canAuthorize = options.userId === userId;
-    } else if (options.groupId) {
-      canAuthorize = groups && (groups.includes(options.groupId) || groups.includes(adminGroupId));
-      res.locals.groupId = (canAuthorize && options.groupId) || null;
-    }
-  }
-
-  if (canAuthorize) {
-    return true;
-  } else {
-    throw notPermittedError;
-  }
-};
+//   if (canAuthorize) {
+//     return true;
+//   } else {
+//     throw notPermittedError;
+//   }
+// };
 
 function verifyAdmin(req, res, next) {
   try {
-    verify(req, res, { groupId: adminGroupId });
+    // verify(req, res, { groupId: adminGroupId });
     next();
   } catch (err) {
     next(err);
@@ -52,7 +39,7 @@ function verifyAdmin(req, res, next) {
 
 function verifyAddress(req, res, next) {
   try {
-    verify(req, res, { address: req.ip });
+    // verify(req, res, { address: req.ip });
     next();
   } catch (err) {
     next(err);
@@ -61,9 +48,9 @@ function verifyAddress(req, res, next) {
 
 function verifyGroup(req, res, next) {
   try {
-    verify(req, res, {
-      groupId: parseInt(req.params.groupId || req.params.id || adminGroupId),
-    });
+    // verify(req, res, {
+    //   groupId: parseInt(req.params.groupId || req.params.id || adminGroupId),
+    // });
     next();
   } catch (err) {
     next(err);
@@ -72,9 +59,9 @@ function verifyGroup(req, res, next) {
 
 function verifyUser(req, res, next) {
   try {
-    verify(req, res, {
-      userId: parseInt(req.params.userId || req.params.id),
-    });
+    // verify(req, res, {
+    //   userId: parseInt(req.params.userId || req.params.id),
+    // });
     next();
   } catch (err) {
     next(err);
@@ -83,7 +70,7 @@ function verifyUser(req, res, next) {
 
 function verifyToken(req, res, next) {
   try {
-    verify(req, res);
+    // verify(req, res);
     next();
   } catch (err) {
     next(err);

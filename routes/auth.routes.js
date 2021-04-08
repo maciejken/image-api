@@ -9,6 +9,8 @@ const authLimiter = rateLimit({
   max: parseInt(process.env.RATE_LIMIT_MAX)
 });
 
-router.get(`/`, authLimiter, authController.getIdToken);
+router.get(`/login`, authController.renderLoginForm);
+router.post(`/login`, authLimiter, authController.login);
+router.get('/logout', authController.logout);
 
 module.exports = router;

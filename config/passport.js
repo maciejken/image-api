@@ -6,10 +6,8 @@ const verifyCallback = (username, password, done) => {
   User.findOne({ where: { username }})
     .then(user => {
       if (user && user.isCorrectPassword(password)) {
-        console.log(user);
         return done(null, user);
       } else {
-        console.log('incorrect username or password');
         return done(null, false);
       }
     })
@@ -27,7 +25,9 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(userId, done) {
   User.findByPk(userId)
     .then(user => {
-      done(null, user);
+      const { id, username, createdAt, updatedAt } = user.dataValues;
+      const userData = { id, username, createdAt, updatedAt };
+      done(null, userData);
     })
     .catch(done);
 });

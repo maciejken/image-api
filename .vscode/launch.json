@@ -29,10 +29,9 @@
         "SECRET": "some secret",
         "SEQUELIZE_USERNAME": "",
         "SEQUELIZE_PASSWORD": "",
-        "SEQUELIZE_HOST": "localhost",
+        "SEQUELIZE_HOST": "",
         "SEQUELIZE_PORT": "5432",
-        "SEQUELIZE_DIALECT": "sqlite",
-        "SEQUELIZE_STORAGE": "C:\\Users\\macie\\pictures\\uploads\\images.sqlite",
+        "SEQUELIZE_DIALECT": "postgres",
         "SEQUELIZE_DATABASE": "images_qa",
         "SEQUELIZE_LOGGING": "",
       }

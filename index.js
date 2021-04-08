@@ -30,7 +30,7 @@ app.use(session({
   store: new RedisStore({ client: redisClient }),
   secret: process.env.SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60 *24
   }
@@ -49,10 +49,11 @@ require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
-const apiPrefix = process.env.API_PREFIX;
+const { apiPrefix } = require('./config');
 logger.debug(`API prefix is "${apiPrefix}"`);
 
-app.use(`${apiPrefix}/auth`, require('./routes/auth.routes'))
+app.use(`/auth`, require('./routes/auth.routes'));
+
 app.use(`${apiPrefix}/users`, require('./routes/user.routes'));
 app.use(`${apiPrefix}/groups`, require('./routes/group.routes'));
 app.use(`${apiPrefix}/images`, require('./routes/images.routes'));
@@ -73,55 +74,21 @@ app.get('/',
   //   next();
   // },
   (req, res) => {
-    if (req.session.viewCount) {
-      req.session.viewCount += 1;
-    } else {
-      req.session.viewCount = 1;
-    }
     const { viewCount } = req.session;
     if (req.isAuthenticated()) {
+      if (req.session.viewCount) {
+        req.session.viewCount += 1;
+      } else {
+        req.session.viewCount = 1;
+      }
       res.render('index', { user: req.user, viewCount });
     } else {
       res.redirect('/sad-face');
     }
   });
 
-app.get('/login',
-  function(req, res){
-    res.render('login');
-  });
-  
-app.post('/login',
-  passport.authenticate('local', {
-    failureRedirect: '/sad-face',
-    successRedirect: '/',
-  }),
-),
-
 app.get('/sad-face', (req, res) => {
   res.render('sad-face');
-});
-  
-app.get('/logout',
-  function(req, res){
-    req.logout();
-    res.redirect('/sad-face');
-  });
-
-app.get('/profile',
-  function(req, res){
-    res.render('profile', { user: req.user });
-  });
-
-app.get('*', (req, res) => {
-  if (req.session.viewCount) {
-    req.session.viewCount += 1;
-  } else {
-    req.session.viewCount = 1;
-  }
-  const { viewCount } = req.session;
-  const { user } = res.locals;
-  res.render('index', { user, viewCount });
 });
 
 const logRequestError = (req, res, next) => {

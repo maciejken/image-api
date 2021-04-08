@@ -8,6 +8,7 @@ const {
 } = require('../model');
 
 module.exports = {
+  apiPrefix: process.env.API_PREFIX,
   uploadField: process.env.IMAGE_UPLOAD_FIELD_NAME,
   pathToPublicUploads: path.resolve(__dirname, '../public/uploads'),
   pathToPrivateUploads: process.env.PATH_TO_UPLOADS,
