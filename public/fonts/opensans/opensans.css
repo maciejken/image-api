@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "Open Sans";
+  src: url(OpenSans-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Open Sans Light";
+  src: url(OpenSans-Light.ttf) format("truetype");
+}

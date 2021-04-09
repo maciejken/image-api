@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const { User } = require('../model');
+const { User, Group } = require('../model');
 
 const verifyCallback = (username, password, done) => {
   User.findOne({ where: { username }})
@@ -22,11 +22,11 @@ passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(function(userId, done) {
-  User.findByPk(userId)
+passport.deserializeUser(function(id, done) {
+  User.findOne({ where: { id }, include: Group })
     .then(user => {
-      const { id, username, createdAt, updatedAt } = user.dataValues;
-      const userData = { id, username, createdAt, updatedAt };
+      const { username, groups, createdAt, updatedAt } = user;
+      const userData = { id, username, groups, createdAt, updatedAt };
       done(null, userData);
     })
     .catch(done);
