@@ -4,28 +4,11 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/styles/main.css" rel="stylesheet" type="text/css">
-  <title>Strona główna</title>
+  <link href="/views/<%- view.name -%>/styles.css" rel="stylesheet" type="text/css">
+  <title><%= view.title %></title>
 </head>
 <body>
-  <%- include('partials/header', { username: user.username }) -%>
-
-  <main class="main-content">
-    <% if (!user) { %>
-      <p>Witaj! <a href="/auth/login" class="link">Zaloguj się</a>.</p>
-    <% } else { %>
-      <div>
-        Twoje grupy:
-        <ul class="main-list">
-          <% user.groups.forEach(group => { %>
-            <li><%= group.id %> - <%= group.name %></li>
-          <% }) %>
-        </ul>      
-      </div>
-    <% } %>
-    <p>Liczba odwiedzin: <%= viewCount %></p>    
-  </main>
-
-  <%- include('partials/footer') -%>
+  <%- include(view.name + '/index') -%>
 </body>
+<script src="/views/<%- view.name -%>/script.js"></script>
 </html>

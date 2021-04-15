@@ -1,0 +1,41 @@
+.icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  margin: 0 0 0 .25em;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.icon-external-link {
+  background-image: url(fa-external-link.svg);
+}
+
+.icon-sign-in {
+  background-image: url(fa-sign-in-alt.svg);
+}
+
+.icon-sign-out {
+  background-image: url(fa-sign-out-alt.svg);
+}
+
+.icon-info-circle {
+  background-image: url(fa-info-circle.svg);
+}
+
+.icon-times {
+  background-image: url(fa-times.svg);
+}
+
+.icon-bars {
+  background-image: url(fa-bars.svg);
+}
+
+.icon-image {
+  background-image: url(fa-image.svg);
+}
+
+.icon-user-plus {
+  background-image: url(fa-user-plus.svg);
+  margin-top: 2px;
+}

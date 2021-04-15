@@ -33,4 +33,8 @@ router.get(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.
 router.patch(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.updateExperience);
 router.delete(`/:id(${Regex.positiveInt})/experiences/:experienceId`, cvController.removeExperience);
 
+// router.get('/*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, '../public/cv', 'index.html'));
+// });
+
 module.exports = router;

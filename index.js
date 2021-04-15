@@ -18,7 +18,7 @@ const logger = require('./libs/logger')('server');
 const errorHandler = require('./middleware/errors/error-handler');
 
 const app = express();
-const allowedOrigin = process.env.ALLOWED_ORIGIN;
+const { allowedOrigin } = require('./config');
 logger.debug(`access control allowed origin is "${allowedOrigin}"`);
 app.use(cors({
   origin: allowedOrigin,
@@ -33,7 +33,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 60 *24
-  }
+  },
+  rolling: true,
 }));
 app.use(cookieParser());
 app.use(helmet());
@@ -49,47 +50,10 @@ require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 
-const { apiPrefix } = require('./config');
-logger.debug(`API prefix is "${apiPrefix}"`);
-
-app.use(`/auth`, require('./routes/auth.routes'));
-
-app.use(`${apiPrefix}/users`, require('./routes/user.routes'));
-app.use(`${apiPrefix}/groups`, require('./routes/group.routes'));
-app.use(`${apiPrefix}/images`, require('./routes/images.routes'));
-app.use(`${apiPrefix}/uploads`, require('./routes/uploads.routes'));
-app.use(`${apiPrefix}/cv`, require('./routes/cv.routes'));
-app.use(`${apiPrefix}/experiences`, require('./routes/experience.routes'));
-
 app.use(express.static(path.resolve('./public')));
-// app.get('/cv/*', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, 'public/cv', 'index.html'));
-// });
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'public', 'views'));
-app.get('/',
-  // (req, res, next) => {
-  //   console.log(req.session);
-  //   console.log(req.user);
-  //   next();
-  // },
-  (req, res) => {
-    const { viewCount } = req.session;
-    if (req.isAuthenticated()) {
-      if (req.session.viewCount) {
-        req.session.viewCount += 1;
-      } else {
-        req.session.viewCount = 1;
-      }
-      res.render('index', { user: req.user, viewCount });
-    } else {
-      res.redirect('/sad-face');
-    }
-  });
-
-app.get('/sad-face', (req, res) => {
-  res.render('sad-face');
-});
+require('./routes/app.routes')(app);
 
 const logRequestError = (req, res, next) => {
   logger.error(`${req.method} ${req.originalUrl} route not found`);

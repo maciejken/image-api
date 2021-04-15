@@ -1,0 +1,13 @@
+<%- include('../__header') -%>
+  
+<% if (!user) { %>
+  <%- include('__form', { form }) -%>
+<% } else { %>
+  <section class="section-images">
+    <% images.forEach(image => { %>
+      <%- include('__thumb', { image }) -%>
+    <% }) %>
+  </section>
+<% } %>
+
+<%- include('../__footer') -%>
