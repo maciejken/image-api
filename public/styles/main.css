@@ -1,0 +1,7 @@
+@import url(/styles/reset.css);
+@import url(/fonts/opensans/opensans.css);
+
+body {
+  margin: 0;
+  font-family: 'Open Sans Light', sans-serif;
+}

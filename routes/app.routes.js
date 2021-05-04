@@ -13,8 +13,48 @@ const authLimiter = rateLimit({
   max: parseInt(process.env.RATE_LIMIT_MAX)
 });
 
+baseRouter.get('/',
+  (req, res) => {
+    if (req.session.viewCount) {
+      req.session.viewCount += 1;
+    } else {
+      req.session.viewCount = 1;
+    }
+    if (req.isAuthenticated()) {
+      res.render('home', {
+        user: req.user,
+        images: new Array(20).fill({
+          filename: 'liczniki.jpg',
+        }),
+        viewCount: req.session.viewCount,
+      });
+    } else {
+      res.redirect('/login');
+    }
+  }
+);
+baseRouter.get('/login', 
+  (req, res) => {
+    res.render('index', {
+      user: null,
+      form: {
+        action: '/login',
+        submitValue: 'Zaloguj',
+      },
+      view: {
+        name: 'form',
+        title: 'Zaloguj się',
+      },
+      viewSwitch: {
+        link: '/add-account',
+        title: 'Nowe konto',
+        icon: 'icon-user-plus'
+      },
+      viewCount: req.session.viewCount,
+    });
+  }
+);
 baseRouter.post(`/login`, authLimiter, authController.login);
-baseRouter.get('/logout', authController.logout);
 baseRouter.get('/sad-face', 
   (req, res) => {
     res.render('index', {
@@ -25,39 +65,25 @@ baseRouter.get('/sad-face',
     });
   }
 );
-baseRouter.get('/',
+baseRouter.get('/logout', authController.logout);
+baseRouter.get('/add-account',
   (req, res) => {
-    if (req.session.viewCount) {
-      req.session.viewCount += 1;
-    } else {
-      req.session.viewCount = 1;
-    }
-    if (req.isAuthenticated()) {
-      res.render('index', {
-        user: req.user,
-        images: new Array(20).fill({
-          filename: 'liczniki.jpg',
-        }),
-        view: {
-          name: 'home',
-          title: 'Strona główna',
-        },
-        viewCount: req.session.viewCount,
-      });
-    } else {
-      res.render('index', {
-        user: null,
-        form: {
-          action: '/login',
-          submitValue: 'Zaloguj',
-        },
-        view: {
-          name: 'home',
-          title: 'Zaloguj się',
-        },
-        viewCount: req.session.viewCount,
-      });
-    }
+    res.render('index', {
+      form: {
+        action: `${apiPrefix}/users`,
+        submitValue: 'Utwórz konto',
+      },
+      view: {
+        name: 'form',
+        title: 'Nowe konto',
+      },
+      viewSwitch: {
+        link: '/login',
+        title: 'Zaloguj się',
+        icon: 'icon-sign-in'
+      },
+      viewCount: req.session.viewCount
+    });
   }
 );
 

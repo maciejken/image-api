@@ -5,7 +5,7 @@ const ContentType = {
   'content-type': {
     in: 'headers',
     matches: {
-      options: ['^application/json$', 'i']
+      options: ['^application/(json|x-www-form-urlencoded)$', 'i']
     }
   },
 };

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strona główna</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script type="module" src="modules/main.js"></script>
+</head>
+<body>
+  <app-header>
+    <span slot="header-greeting">
+      Witaj, <%= user.username %>!
+    </span>
+    <span slot="header-groups">
+      <%= user.groups.map(g => `${g.id} - ${g.name}`).join(', ') %>
+    </span>
+  </app-header>
+  <app-image-list></app-image-list>
+  <app-footer>
+    <span slot="view-count">
+      Liczba odwiedzin: <%= viewCount %>
+    </span>
+  </app-footer>
+</body>
+</html>
